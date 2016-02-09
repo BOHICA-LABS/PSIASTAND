@@ -1,3 +1,5 @@
+# look into a plugin system for use with automating STIGS
+
 if ($PSVersionTable.PSVersion.Major -ge 3) {
     $script:IgnoreErrorPreference = 'Ignore'
     $outNullModule = 'Microsoft.PowerShell.Core'
@@ -79,7 +81,7 @@ foreach ($keyValuePair in $script:SafeCommands.GetEnumerator()) {
     {
         Throw "Failed to load EPPlus binary from $BinaryPath"
     }
-<#
+
 #Pick and import assemblies sqlite:
     if([IntPtr]::size -eq 8) #64
     {
@@ -98,7 +100,7 @@ foreach ($keyValuePair in $script:SafeCommands.GetEnumerator()) {
     {
         Throw "This module requires the ADO.NET driver for SQLite:`n`thttp://system.data.sqlite.org/index.html/doc/trunk/www/downloads.wiki"
     }
-#>
+
 
 # Import private and public functions
 $moduleRoot = & $script:SafeCommands['Split-Path'] -Path $MyInvocation.MyCommand.Path
@@ -139,9 +141,8 @@ $moduleRoot = & $script:SafeCommands['Split-Path'] -Path $MyInvocation.MyCommand
 & $script:SafeCommands['ForEach-Object'] { . $_.ProviderPath }
 
 # Import sqlite main functions
-<#
+
 "$moduleRoot\functions\sqlite\main\*.ps1" |
 & $script:SafeCommands['Resolve-Path'] |
 & $script:SafeCommands['Where-Object'] { -not ($_.ProviderPath.ToLower().Contains(".tests.")) } |
 & $script:SafeCommands['ForEach-Object'] { . $_.ProviderPath }
-#>
