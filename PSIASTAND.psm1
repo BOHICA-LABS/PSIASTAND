@@ -146,3 +146,10 @@ $moduleRoot = & $script:SafeCommands['Split-Path'] -Path $MyInvocation.MyCommand
 & $script:SafeCommands['Resolve-Path'] |
 & $script:SafeCommands['Where-Object'] { -not ($_.ProviderPath.ToLower().Contains(".tests.")) } |
 & $script:SafeCommands['ForEach-Object'] { . $_.ProviderPath }
+
+# Import xml main functions
+
+"$moduleRoot\functions\xml\main\*.ps1" |
+& $script:SafeCommands['Resolve-Path'] |
+& $script:SafeCommands['Where-Object'] { -not ($_.ProviderPath.ToLower().Contains(".tests.")) } |
+& $script:SafeCommands['ForEach-Object'] { . $_.ProviderPath }

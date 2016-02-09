@@ -27,7 +27,7 @@ $DataTable = 1..1000 | %{
                 } | Select fullname, surname, givenname, birthdate
             } | Out-DataTable @Verbose
 
-Describe "Invoke-SQLiteBulkCopy PS$PSVersion" {
+Describe "Invoke-SQLiteBulkCopy (Requires Out-DataTable) PS$PSVersion" {
 
     Context 'Strict mode' {
 
