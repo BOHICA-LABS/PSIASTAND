@@ -7,7 +7,7 @@ $moduleName = "PSIASTAND"
 
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Import-Module "$here\..\..\..\..\$($moduleName)"
+#Import-Module "$here\..\..\..\..\$($moduleName)"
 
 Describe "Import-XML PS: $PSVersion"{
 
@@ -72,4 +72,4 @@ test
     }
 }
 
-Remove-Module $moduleName
+#Remove-Module $moduleName

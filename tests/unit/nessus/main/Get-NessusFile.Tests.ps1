@@ -4,7 +4,7 @@
 
 $moduleName = "PSIASTAND"
 
-Import-Module "$here\..\..\..\..\$($moduleName)"
+#Import-Module "$here\..\..\..\..\$($moduleName)"
 #InModuleScope nessusOpenPorts {
     Describe "Get-NessusFile" {
         Setup -File somefile.nessus
@@ -39,4 +39,4 @@ Import-Module "$here\..\..\..\..\$($moduleName)"
         }
     }
 #}
-Remove-Module $moduleName
+#Remove-Module $moduleName

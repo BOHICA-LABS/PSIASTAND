@@ -6,7 +6,7 @@ $moduleName = "PSIASTAND"
 
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Import-Module "$here\..\..\..\..\$($moduleName)"
+#Import-Module "$here\..\..\..\..\$($moduleName)"
 
 #Set up some data we will use in testing
     $ExistingXLSXFile = "$here\Working.xlsx"
@@ -58,6 +58,6 @@ Describe "Add-PivotTable PS$PSVersion" {
         }
     }
 }
-Remove-Module $moduleName
+#Remove-Module $moduleName
 Remove-Item $NewXLSXFile -force -ErrorAction SilentlyContinue
 Remove-Item $ExistingXLSXFile -force -ErrorAction SilentlyContinue

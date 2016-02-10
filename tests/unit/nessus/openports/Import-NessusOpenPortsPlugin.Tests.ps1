@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 
 
-Import-Module "$here\..\..\..\..\$($moduleName)"
+#Import-Module "$here\..\..\..\..\$($moduleName)"
 #InModuleScope nessusOpenPorts {
     Describe "Import-NessusOpenPortsPlugin" {
         Setup -File sample.nessus
@@ -494,4 +494,4 @@ The Win32 process &apos;wininit.exe&apos; is listening on this port (pid 488).</
         }
     }
 #}
-Remove-Module $moduleName
+#Remove-Module $moduleName

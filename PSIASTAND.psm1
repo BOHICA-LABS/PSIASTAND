@@ -105,51 +105,7 @@ foreach ($keyValuePair in $script:SafeCommands.GetEnumerator()) {
 # Import private and public functions
 $moduleRoot = & $script:SafeCommands['Split-Path'] -Path $MyInvocation.MyCommand.Path
 
-# Import Excel Functions
-
-"$moduleRoot\functions\excel\*.ps1" |
-& $script:SafeCommands['Resolve-Path'] |
-& $script:SafeCommands['Where-Object'] { -not ($_.ProviderPath.ToLower().Contains(".tests.")) } |
-& $script:SafeCommands['ForEach-Object'] { . $_.ProviderPath }
-
-# Import Nessus Functions
-
-"$moduleRoot\functions\nessus\*.ps1" |
-& $script:SafeCommands['Resolve-Path'] |
-& $script:SafeCommands['Where-Object'] { -not ($_.ProviderPath.ToLower().Contains(".tests.")) } |
-& $script:SafeCommands['ForEach-Object'] { . $_.ProviderPath }
-
-# Import Nessus\openports functions
-
-"$moduleRoot\functions\nessus\openports\*.ps1" |
-& $script:SafeCommands['Resolve-Path'] |
-& $script:SafeCommands['Where-Object'] { -not ($_.ProviderPath.ToLower().Contains(".tests.")) } |
-& $script:SafeCommands['ForEach-Object'] { . $_.ProviderPath }
-
-# Import Nessus\main functions
-
-"$moduleRoot\functions\nessus\main\*.ps1" |
-& $script:SafeCommands['Resolve-Path'] |
-& $script:SafeCommands['Where-Object'] { -not ($_.ProviderPath.ToLower().Contains(".tests.")) } |
-& $script:SafeCommands['ForEach-Object'] { . $_.ProviderPath }
-
-# Import Support functions
-
-"$moduleRoot\functions\support\*.ps1" |
-& $script:SafeCommands['Resolve-Path'] |
-& $script:SafeCommands['Where-Object'] { -not ($_.ProviderPath.ToLower().Contains(".tests.")) } |
-& $script:SafeCommands['ForEach-Object'] { . $_.ProviderPath }
-
-# Import sqlite main functions
-
-"$moduleRoot\functions\sqlite\main\*.ps1" |
-& $script:SafeCommands['Resolve-Path'] |
-& $script:SafeCommands['Where-Object'] { -not ($_.ProviderPath.ToLower().Contains(".tests.")) } |
-& $script:SafeCommands['ForEach-Object'] { . $_.ProviderPath }
-
-# Import xml main functions
-
-"$moduleRoot\functions\xml\main\*.ps1" |
-& $script:SafeCommands['Resolve-Path'] |
-& $script:SafeCommands['Where-Object'] { -not ($_.ProviderPath.ToLower().Contains(".tests.")) } |
-& $script:SafeCommands['ForEach-Object'] { . $_.ProviderPath }
+$("C:\Users\josh\Google Drive\Work\modules\custom\PSIASTAND\functions" |
+ Get-ChildItem -Recurse -Filter "*.ps1").fullName | 
+ Where-Object { -not ($_.ToLower().Contains(".tests.")) } | 
+ ForEach-Object {. $_ }

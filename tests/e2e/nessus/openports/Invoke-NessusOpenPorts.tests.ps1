@@ -4,7 +4,7 @@ $moduleName = 'PSIASTAND'
 $root = "$here\..\..\..\..\"
 
 # Module Checks
-Import-Module "$here\..\..\..\..\$($moduleName)"
+#Import-Module "$here\..\..\..\..\$($moduleName)"
 Describe "Invoke-NessusOpenPorts" {
         Setup -File sample.nessus
         Setup -File anothersample.nessus
@@ -537,6 +537,6 @@ The Win32 process &apos;wininit.exe&apos; is listening on this port (pid 488).</
         {Invoke-NessusOpenPorts -Nessus TestDrive:\sample4.nessus -packagename "Test" -outPut TestDrive:\} | Should Throw "$((Get-Item TestDrive:\sample4.nessus).name) Not a credentialed Scan"
     }
 }
-Remove-Module $moduleName
+#Remove-Module $moduleName
 
 #Invoke-NessusOpenPorts

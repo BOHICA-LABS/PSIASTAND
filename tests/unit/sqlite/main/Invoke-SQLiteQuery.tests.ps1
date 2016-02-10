@@ -12,7 +12,7 @@ $moduleName = "PSIASTAND"
 
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Import-Module "$here\..\..\..\..\$($moduleName)"
+#Import-Module "$here\..\..\..\..\$($moduleName)"
 
 $SQLiteFile = "$here\Working.SQLite"
 Remove-Item $SQLiteFile  -force -ErrorAction SilentlyContinue
@@ -82,5 +82,5 @@ Describe "Invoke-SQLiteQuery (Requires New-SQLiteConnection) PS$PSVersion" {
     }
 }
 
-Remove-Module $moduleName
+#Remove-Module $moduleName
 Remove-Item $SQLiteFile -force -ErrorAction SilentlyContinue

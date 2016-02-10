@@ -4,7 +4,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 
 $moduleName = "PSIASTAND"
 
-Import-Module "$here\..\..\..\$($moduleName)"
+#Import-Module "$here\..\..\..\$($moduleName)"
 #InModuleScope nessusOpenPorts {
     Describe "Get-OutPutDir" {
         Setup -Dir Temp
@@ -26,4 +26,4 @@ Import-Module "$here\..\..\..\$($moduleName)"
         }
     }
 #}
-Remove-Module $moduleName
+#Remove-Module $moduleName

@@ -51,7 +51,7 @@ Describe -Tags 'VersionChecks' "Powershell IA Standard Library manifest and chan
 
 # all commands are called from the safe command table
 #Import-Module "$((Get-Location).Path)\..\..\..\$($moduleName)"
-Import-Module "$here\..\..\..\$($moduleName)"
+#Import-Module "$here\..\..\..\$($moduleName)"
 InModuleScope PSIASTAND {
     Describe 'SafeCommands table' {
         $path = $ExecutionContext.SessionState.Module.ModuleBase
@@ -85,7 +85,7 @@ InModuleScope PSIASTAND {
         }
     }
 }
-Remove-Module $moduleName
+#Remove-Module $moduleName
 
 # Style Enforcement
 Describe 'Style rules' {
