@@ -8,6 +8,7 @@
     - Created unit tests for Import-CKL
     - Created ConvertTo-CKL and implemented unit tests
     - Created Export-CKL end to end script and e2e tests
+    - Created Import-Nessus and implemented unit tests
 
 ## 1.0.0 (Feb, 8, 2016)
     - Initial Release

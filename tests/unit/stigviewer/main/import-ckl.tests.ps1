@@ -55,4 +55,3 @@ Describe "Import-CKL PS: $PSVersion" {
 
     }
 }
-

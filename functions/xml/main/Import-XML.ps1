@@ -36,6 +36,7 @@ A file object Variable version of the XML
         Try {
             $ErrorActionPreference = 'Stop'
             $Private:doc.Load($Path)
+            $ErrorActionPreference = 'Continue'
             return $Private:doc
         }
         Catch {
@@ -48,6 +49,7 @@ A file object Variable version of the XML
         Try {
             $ErrorActionPreference = 'Stop'
             $Private:doc.LoadXML($string)
+            $ErrorActionPreference = 'Continue'
             return $Private:doc
         }
         Catch {
@@ -60,6 +62,7 @@ A file object Variable version of the XML
         Try {
             $ErrorActionPreference = 'Stop'
             $Private:doc.Load($fileobj.fullname)
+            $ErrorActionPreference = 'Continue'
             return $Private:doc
         }
         Catch {

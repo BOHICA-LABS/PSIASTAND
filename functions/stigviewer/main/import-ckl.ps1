@@ -3,7 +3,7 @@
 .SYNOPSIS
 Imports a  STIG Viewer cklv2 file into an object
 
-.PARAMETER file
+.PARAMETER doc
 The file to look for
 
 .EXAMPLE
