@@ -1,4 +1,4 @@
-﻿## 1.0.1 (Feb, 10, 2016)
+﻿## 1.0.1 (Feb, 16, 2016)
     - Implemented excel unit tests
     - Implemented SQL unit tests
     - Implemented Import-XML function and tests
@@ -9,6 +9,14 @@
     - Created ConvertTo-CKL and implemented unit tests
     - Created Export-CKL end to end script and e2e tests
     - Created Import-Nessus and implemented unit tests
+    - Created Expand-ZIP and Compress-ZIP for working with zip files in powershell Created unit tests for both functions
+    - Created Import-DIACAP and unit tests
+    - Created Join-Controls and Unit Tests
+    - Created Export-CombinedReports, unit tests and e2e tests
+    - Created Export-RiskElements, unit tests and e2e tests
+    - Created Compress-Reports and unit tests
+    - Created ConvertTo-RiskElements and unit tests
+
 
 ## 1.0.0 (Feb, 8, 2016)
     - Initial Release

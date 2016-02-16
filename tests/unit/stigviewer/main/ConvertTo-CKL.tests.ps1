@@ -1,11 +1,10 @@
 ﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
-#. "$here\..\..\..\..\functions\nessus\openports\$sut"
+
 
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-#Import-Module "$here\..\..\..\..\$($moduleName)"
 
 Describe "ConvertTo-CKL PS: $PSVersion" {
 
@@ -46,10 +45,10 @@ Describe "ConvertTo-CKL PS: $PSVersion" {
         "SEVERITY_JUSTIFICATION"= "Severity Override Justification"
     }
 
-    Copy-Item -Path "$here\Sample_Win2008R2MS.csv" -Destination "TestDrive:\Sample_Win2008R2MS.csv"
-    Copy-Item -Path "$here\Sample_Win2008R2MS.xlsx" -Destination "TestDrive:\Sample_Win2008R2MS.xlsx"
+    Copy-Item -Path "$Global:testData\Trackers\Sample04_Win2008R2MS.csv" -Destination "TestDrive:\Sample_Win2008R2MS.csv"
+    Copy-Item -Path "$Global:testData\Trackers\Sample05_Win2008R2MS.xlsx" -Destination "TestDrive:\Sample_Win2008R2MS.xlsx"
+
     Setup -Dir "result"
-    #"$here\sample.ckl"
 
     Context "Strict mode" {
 

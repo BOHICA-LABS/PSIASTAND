@@ -1,7 +1,7 @@
 ﻿function Export-CombinedReports {
 <#
 .SYNOPSIS
-This function loads an XML into an XML object. Can take a string path, a string xml, or a file object
+This function loads Nessus and CKL files and outputs a combined CKL report and a nessus report in human readable form
 
 .PARAMETER CKLFILES
 Path to the CKL Files. We process from the CKL files
@@ -111,15 +111,12 @@ Recursively find CKL and Nessus files
                     $Private:xml = Import-XML -fileobj $Private:file -erroraction stop # Import XML
                     $Private:ckl = import-ckl -doc $Private:xml -erroraction stop # Import CKL from XML
                     if ($Private:cklversioncheck -eq 0) { # Set CKL Version Level
-                        Write-Host $Private:ckl[0].StigViewer_Version
                         $Private:cklversioncheck = $Private:ckl[0].StigViewer_Version
                     }
                     elseif ($Private:ckl[0].StigViewer_Version -ne $Private:cklversioncheck) { # Check returned CKL version against approved CKL Version
                         Throw "$($Private:file.name) CKL Version mismatch error"
                     }
-                    else {
-                        $Private:compiledCKLReport += $Private:ckl
-                    }
+                    $Private:compiledCKLReport += $Private:ckl
                 }
                 Catch {
                     Throw "$($Private:file.name) CKL file failed to process"
