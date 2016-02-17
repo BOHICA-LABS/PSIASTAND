@@ -16,6 +16,8 @@
     - Created Export-RiskElements, unit tests and e2e tests
     - Created Compress-Reports and unit tests
     - Created ConvertTo-RiskElements and unit tests
+    - Created Update-Controls, unit tests and e2e tests
+    - Created Get-Compliance, unit tests and e2e tests
 
 
 ## 1.0.0 (Feb, 8, 2016)
