@@ -88,4 +88,4 @@
         Export-XLSX -Path "$($output)\$($name)_STIG_Compliance_Report.xlsx" -InputObject $complianceReport
     }
 }
-#Get-Compliance -ckl "C:\Users\josh\Google Drive\Work\modules\custom\PSIASTAND\tests\data\CKL\CKLv1"
+#$($ness.NessusClientData_v2.Policy.Preferences.ServerPreferences.preference | Where-Object {$_.Name -eq "Plugin_Set"}).value

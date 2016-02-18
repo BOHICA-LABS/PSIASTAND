@@ -1,4 +1,4 @@
-﻿## 1.0.1 (Feb, 16, 2016)
+﻿## 1.0.1 (Feb, 18, 2016)
     - Implemented excel unit tests
     - Implemented SQL unit tests
     - Implemented Import-XML function and tests
@@ -18,6 +18,8 @@
     - Created ConvertTo-RiskElements and unit tests
     - Created Update-Controls, unit tests and e2e tests
     - Created Get-Compliance, unit tests and e2e tests
+    - Created Invoke-Algorithm, unit tests and e2e tests
+    - Created Get-Average to support Invoke-Algorithm
 
 
 ## 1.0.0 (Feb, 8, 2016)

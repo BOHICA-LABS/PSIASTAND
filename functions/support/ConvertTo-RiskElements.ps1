@@ -37,7 +37,7 @@
         if ($ckl) {
                 $Private:results = @()
                 foreach($Private:reportObj in $report){
-                $Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, Risk)
+                $Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values")
                 if($Private:reportObj.Vuln_Num){
                     $Private:entry.name = "$($Private:reportObj.STIG_Title) - ID: $($Private:reportObj.Vuln_Num) - $($Private:reportObj.Rule_Title)"
                 }
@@ -69,7 +69,8 @@
                 }
                 $Private:entry.'IA Control' = $Private:reportObj.IA_Controls
                 $Private:entry.Count = $Private:reportObj.vuln_count
-                $Private:entry.Risk = $null
+                $Private:entry.'Assessed Risk Level' = $null
+                $Private:entry.'Quantitative Values' = $null
                 $Private:results += $Private:entry
             }
             return $Private:results
@@ -77,7 +78,7 @@
         if ($nessus) {
             $Private:results = @()
             foreach($Private:reportObj in $report){
-                $Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, Risk)
+                $Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values")
                 $Private:entry.Name = "ACAS - Plugin ID: $($Private:reportObj.pluginID) - $($Private:reportObj.pluginName)"
                 $Private:entry.Weaknesses = "Description:" + "`r`n" + $($Private:reportObj.description) + "`r`n" + "Affected System:" + "`r`n" + $($Private:reportObj.AssetName -split "," -join "`r`n")
                 if($Private:reportObj.Severity){
@@ -102,14 +103,15 @@
                 } # else
                 $Private:entry.'IA Control' = $null
                 $Private:entry.Count = $Private:reportObj.vuln_count
-                $Private:entry.Risk = $null
+                $Private:entry.'Assessed Risk Level' = $null
+                $Private:entry.'Quantitative Values' = $null
                 $Private:results += $Private:entry
             }
         }
         if ($diacap) {
             $Private:results = @()
             foreach($Private:reportObj in $report){
-                $Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, Risk)
+                $Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values")
                 $Private:entry.Name = "8500.2 - ID: $($Private:reportObj.AssessmentObjectiveID) - $($Private:reportObj.'Control Name')"
                 $Private:entry.Weaknesses = "Description:" + "`r`n" + $($Private:reportObj.'Assessment Objectives') + "`r`n" + "Affected System:" + "`r`n" + "Site"
                 if($Private:reportObj.'Impact Code' -eq 'low'){
@@ -126,7 +128,8 @@
                 } # Else
                 $Private:entry.'IA Control' = $Private:reportObj.'Control Number'
                 $Private:entry.Count = 1
-                $Private:entry.Risk = $null
+                $Private:entry.'Assessed Risk Level' = $null
+                $Private:entry.'Quantitative Values' = $null
                 $Private:results += $Private:entry
             }
         }
