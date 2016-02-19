@@ -17,6 +17,10 @@
 .LINK
 
 .VERSION
+1.0.1 (02.19.2016)
+    - Added -replace "r\d+_rule" to strip r#_rule from rule ID. This portion of the rule ID details the revision of the rule and due
+        to MCCAST being behind on import the STIGS this will cause Items to not match
+
 1.0.0 (02.16.2016)
     -Intial Release
 #>
@@ -68,7 +72,7 @@
                     $findings = $($compiledCKLObj | Where-Object {$_."AssetName" -match $assetname})
                     $importlist = $($testplanimport | Where-Object {$_."Hardware Name" -match $assetname})
                     foreach ($finding in $findings) {
-                        $rowintestplan = $importlist | Where-Object {$_."Rule ID" -match $($finding.Rule_ID)}
+                        $rowintestplan = $importlist | Where-Object {$_."Rule ID" -match $(($finding.Rule_ID) -replace "r\d+_rule")}
                         if ($rowintestplan) {
                             $rowintestplan."Implementation Result" = $(if($finding.STATUS -match "NotAfinding"){"Pass"}elseif($finding.STATUS -match "open"){"Fail"}else{$($finding.STATUS)})
                             $rowintestplan."Implementer Comments" = $($finding.FINDING_DETAILS)
