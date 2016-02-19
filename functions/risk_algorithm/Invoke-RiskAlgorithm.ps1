@@ -2,15 +2,17 @@
 <#
 .SYNOPSIS
 
-.PARAMETER CKL
+.PARAMETER risk
 
-.PARAMETER testplan
+.PARAMETER map
 
-.PARAMETER Output
+.PARAMETER docrisk
+
+.PARAMETER sysrisk
+
+.PARAMETER output
 
 .PARAMETER name
-
-.PARAMETER recursive
 
 .EXAMPLE
 
@@ -131,6 +133,7 @@
     }
     END {
         Export-XLSX -Path "$($output)\$($name)_Risk_Algorithm_Report.xlsx" -InputObject $results
+        Export-XLSX -Path "$($output)\$($name)_Risk_Report.xlsx" -InputObject $riskelements
     }
 }
 

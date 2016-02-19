@@ -1,7 +1,7 @@
 ﻿function Export-CKL {
 <#
 .SYNOPSIS
-This function loads an XML into an XML object. Can take a string path, a string xml, or a file object
+This Script takes our trackers and converts them 
 
 .PARAMETER Path
 Path to the STIG Viewer Export (CSV or XLSX) file. Do not end the path with a \
