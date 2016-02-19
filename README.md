@@ -85,25 +85,27 @@ The following workflow is based on my needs. You can modify/sugest improvements 
 
 #Examples
 
+* Todo!!
+
 #Todo List! (Help Wanted!)
 
-- [] Complete Syntax Documentation on functions!
-- [] Update and further refine test scripts
-- [] Nessus Compliance Added to **Get-Compliance** function
-- [] **Invoke-NessusOpenPorts** look into merging with combined reports
-- [] **Get-StigCompliance** and **Export-CKL** updated to work with Version **2** CKL Files
-- [] Complete workflow for **RMF** workflow automation
-- [] Code optimizations (ALWAYS!)
-- [] Tracker Creation
+- [ ] Complete Syntax Documentation on functions!
+- [ ] Update and further refine test scripts
+- [ ] Nessus Compliance Added to **Get-Compliance** function
+- [ ] **Invoke-NessusOpenPorts** look into merging with combined reports
+- [ ] **Get-StigCompliance** and **Export-CKL** updated to work with Version **2** CKL Files
+- [ ] Complete workflow for **RMF** workflow automation
+- [ ] Code optimizations (ALWAYS!)
+- [ ] Tracker Creation
 
 #Feature Requests
 
 Please submit your feature requests!!!!!
 
-- [] MCCAST v2 RSA Archer API automation
-- [] Nessus Scan Policy Auditing
-- [] Splunk intergration
-- [] Dashboard...?
-- [] IASE RSS Feed Parser automated STIG Download
-- [] SCAP Engine
-- [] Open STIG Viewer....? better features...
+- [ ] MCCAST v2 RSA Archer API automation
+- [ ] Nessus Scan Policy Auditing
+- [ ] Splunk intergration
+- [ ] Dashboard...?
+- [ ] IASE RSS Feed Parser automated STIG Download
+- [ ] SCAP Engine
+- [ ] Open STIG Viewer....? better features...
