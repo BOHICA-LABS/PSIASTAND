@@ -104,8 +104,8 @@ foreach ($keyValuePair in $script:SafeCommands.GetEnumerator()) {
 
 # Import private and public functions
 $moduleRoot = & $script:SafeCommands['Split-Path'] -Path $MyInvocation.MyCommand.Path
-
-$("C:\Users\josh\Google Drive\Work\modules\custom\PSIASTAND\functions" |
+$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+$("$($here)\functions" |
  Get-ChildItem -Recurse -Filter "*.ps1").fullName | 
  Where-Object { -not ($_.ToLower().Contains(".tests.")) } | 
  ForEach-Object {. $_ }
