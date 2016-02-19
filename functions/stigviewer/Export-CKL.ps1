@@ -1,7 +1,7 @@
 ﻿function Export-CKL {
 <#
 .SYNOPSIS
-This Script takes our trackers and converts them 
+This Script takes our trackers and converts them to CKL files
 
 .PARAMETER Path
 Path to the STIG Viewer Export (CSV or XLSX) file. Do not end the path with a \
