@@ -56,24 +56,24 @@
         Catch{
             Throw "$($file.name) CKL failed to process"
         }
-        $stiglist = $($compiledCKLObj | Select STIGRef -Unique | ForEach-Object{$($_.STIGRef).trim()})
+        $stiglist = $($compiledCKLObj | Select STIG_Title -Unique | ForEach-Object{$($_.STIG_Title).trim()})
         $complianceReport = @()
         foreach ($stig in $stiglist) {
-            $current = $($compiledCKLObj | Where-Object {$_.STIGRef -eq $stig})
-            $Private:entry = ($Private:entry = " " | select-object STIG, Systems, System_Count, High_Count_Finding, MED_Count_Finding, LOW_Count_Finding, High_Total, MED_Total, LOW_Total, Total_Checks, Compliance_Percentage, Compliant)
+            $current = $($compiledCKLObj | Where-Object {$_.STIG_Title -eq $stig})
+            $Private:entry = ($Private:entry = " " | select-object STIG, Systems, System_Count, High_Count_Finding, MED_Count_Finding, LOW_Count_Finding, High_Total, MED_Total, LOW_Total, Total_Checks, Total_Points, Lost_Points, Compliance_Percentage, Compliant)
             $Private:entry.STIG = $stig
             $Private:entry.Systems = $((($current | Select AssetName -Unique).AssetName) -Join "`n`r")
-            $Private:entry.System_Count = $(($current | Select AssetName -Unique).count)
-            $Private:entry.High_Count_Finding = $(($current | Where-Object {$_.Severity -eq "High" -and $_.Status -eq "Open" }).count)
-            $Private:entry.MED_Count_Finding = $(($current | Where-Object {$_.Severity -eq "Medium" -and $_.Status -eq "Open" }).count)
-            $Private:entry.LOW_Count_Finding = $(($current | Where-Object {$_.Severity -eq "Low" -and $_.Status -eq "Open" }).count)
-            $Private:entry.High_Total = $(($current | Where-Object {$_.Severity -eq "High"}).count)
-            $Private:entry.MED_Total = $(($current | Where-Object {$_.Severity -eq "Medium"}).count)
-            $Private:entry.LOW_Total = $(($current | Where-Object {$_.Severity -eq "Low"}).count)
+            $Private:entry.System_Count = $((($current | Select AssetName -Unique).AssetName).count)
+            $Private:entry.High_Count_Finding = $((($current | Where-Object {$_.Severity -eq "High" -and $_.Status -eq "Open" }).Status).count)
+            $Private:entry.MED_Count_Finding = $((($current | Where-Object {$_.Severity -eq "Medium" -and $_.Status -eq "Open" }).Status).count)
+            $Private:entry.LOW_Count_Finding = $((($current | Where-Object {$_.Severity -eq "Low" -and $_.Status -eq "Open" }).Status).count)
+            $Private:entry.High_Total = $((($current | Where-Object {$_.Severity -eq "High"}).Severity).count)
+            $Private:entry.MED_Total = $((($current | Where-Object {$_.Severity -eq "Medium"}).Severity).count)
+            $Private:entry.LOW_Total = $((($current | Where-Object {$_.Severity -eq "Low"}).Severity).count)
             $Private:entry.Total_Checks = $(($current).count)
-            $totalLostPoints = ($Private:entry.High_Count_Finding * $highweight) + ($Private:entry.MED_Count_Finding * $medweight) + ($Private:entry.LOW_Count_Finding * $lowweight)
-            $totalPoints = ($Private:entry.High_Total * $highweight) + ($Private:entry.Medium_Total * $medweight) + ($Private:entry.LOW_Total * $lowweight)
-            $Private:entry.Compliance_Percentage = ($totalPoints - $totalLostPoints) / $totalPoints
+            $Private:entry.Total_Points = ($Private:entry.High_Total * $highweight) + ($Private:entry.MED_Total * $medweight) + ($Private:entry.LOW_Total * $lowweight)
+            $Private:entry.Lost_Points = ($Private:entry.High_Count_Finding * $highweight) + ($Private:entry.MED_Count_Finding * $medweight) + ($Private:entry.LOW_Count_Finding * $lowweight)
+            $Private:entry.Compliance_Percentage = $((($Private:entry.Total_Points) - ($Private:entry.Lost_Points)) / ($Private:entry.Total_Points))
             if ($Private:entry.Compliance_Percentage -lt .75 -or $Private:entry.High_Count_Finding -gt 0) {
                 $Private:entry.Compliant = "FALSE"
             }

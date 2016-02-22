@@ -64,7 +64,8 @@ The following workflow is based on my needs. You can modify/sugest improvements 
 
 5. Update-TestPlan
     1. This updates the MCCAST Testplan export based on the findings in the CKL files
-        * This should answer **ALL** Testplan questions. If not you did something wrong
+        * Populate Test Plan where the Hardware field is blank with the name of the Package (Short form) (Look in one of your site level stig CKL in the assest field for this)
+        * This should answer **ALL** Testplan questions. If not you did something wrong - Should be true. MCCAST is behind in updating the STIGS so this may not always be the case.
 
 6. Export-RiskElements
     1. This takes the Controls, the CKL(s), and the nessus file(s) and creates the risk elements report for population
@@ -102,6 +103,7 @@ The following workflow is based on my needs. You can modify/sugest improvements 
 
 Please submit your feature requests!!!!!
 
+- [ ] Compare systems and compute percentage of deviation
 - [ ] MCCAST v2 RSA Archer API automation
 - [ ] Nessus Scan Policy Auditing
 - [ ] Splunk intergration
