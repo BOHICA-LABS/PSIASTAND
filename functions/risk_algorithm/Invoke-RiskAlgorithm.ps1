@@ -57,7 +57,7 @@
         }
 
         foreach ($element in $riskelements) {
-            $mapping = $riskmap | Where-Object {$_.Name -match $($element.name)}
+            $mapping = $riskmap | Where-Object {$_.Name -eq $($element.name)}
             $element."Assessed Risk Level" = $($mapping."Assessed Risk Level")
             $element."Quantitative Values" = $($mapping."Quantitative Values")
         }

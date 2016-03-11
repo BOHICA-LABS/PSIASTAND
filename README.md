@@ -28,6 +28,9 @@ Caveats:
     # Unblock the ZIP
     # Extract the PSIASTAND folder to a module path (e.g. $env:USERPROFILE\Documents\WindowsPowerShell\Modules\)
 
+# Set Execution Policy (This needs to be done for most modules on windows 8.1+)
+    Set-ExecutionPolicy Bypass -scope Process
+
 # Import the module.
     Import-Module PSIASTAND     # Alternatively, Import-Module \\Path\To\PSIASTAND
 
@@ -47,6 +50,13 @@ The following workflow is based on my needs. You can modify/sugest improvements 
     1. This creates a Listening Ports Report for each host scanned by nessus
         * This allows for a review of the PPS (Ports Protocals and Services)
         * This allows for a review of the system documentation (Data Flow)
+        * Example:
+        ```powershell
+            Invoke-NessusOpenPorts -Nessus "<path to nessus files>" -packagename "<IS name>" -output "<path to export report>"
+
+            Invoke-NessusOpenPorts -Nessus "C:\nessusfiles" -packagename "Test-Package" -output "C:\reports"
+        ```
+        * This will output 1 or 2 files. One file will contain all the found open ports: "<IS Name>_openports_<time stamp>.csv". if system did not have detected open ports: "<IS Name>_NoOpePorts_<Time Stamp>.csv".
 
 2. Export-CKL
     1. This creats CKL v1 Files from CSV or XLSX IV&V Trackers (Custom format see Test\Data for examples)
