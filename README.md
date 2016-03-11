@@ -56,7 +56,7 @@ The following workflow is based on my needs. You can modify/sugest improvements 
 
             Invoke-NessusOpenPorts -Nessus "C:\nessusfiles" -packagename "Test-Package" -output "C:\reports"
         ```
-        * This will output 1 or 2 files. One file will contain all the found open ports: "<IS Name>_openports_<time stamp>.csv". if system did not have detected open ports: "<IS Name>_NoOpePorts_<Time Stamp>.csv".
+        * This will output 1 or 2 files. One file will contain all the found open ports: "(IS Name)_openports_(time stamp).csv". if system did not have detected open ports: "(IS Name)_NoOpePorts_(Time Stamp).csv".
 
 2. Export-CKL
     1. This creats CKL v1 Files from CSV or XLSX IV&V Trackers (Custom format see Test\Data for examples)
