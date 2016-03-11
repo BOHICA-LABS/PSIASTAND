@@ -56,17 +56,33 @@ The following workflow is based on my needs. You can modify/sugest improvements 
 
             Invoke-NessusOpenPorts -Nessus "C:\nessusfiles" -packagename "Test-Package" -output "C:\reports"
         ```
-        * This will output 1 or 2 files. One file will contain all the found open ports: "(IS Name)_openports_(time stamp).csv". if system did not have detected open ports: "(IS Name)_NoOpePorts_(Time Stamp).csv".
+        * This will output 1 or 2 files. One file will contain all the found open ports: "(IS Name)_openports_(time stamp).csv". if system did not have detected open ports: "(IS Name)_NoOpenPorts_(Time Stamp).csv".
 
 2. Export-CKL
     1. This creats CKL v1 Files from CSV or XLSX IV&V Trackers (Custom format see Test\Data for examples)
         * Creates the required CKL(s) for upload into the package
         * The CKL(s) are processed later in the workflow due to the predictability of formating in a CKL file
+        * Example:
+        ```powershell
+            Export-CKL -Path <Path to CKL Files> -Out <Location to create the CKL(s)> -version <Version of CKL files (1 or 2. Currently only version 1 is supported)>
+            
+            Export-CKL -Path "C:\Trackers" -out "C:\CKLS" -version 1
+        ```
+        * this will pull all the trackers in the path folder and turn them into CKLS and place them in the out folder
+        * This will error if trackers are not filled out correctly. Read the error message to correct.
 
 3. Export-CombinedReports
     1. This imports both the nessus files and the CKL files and exports:
         * A combined Nessus Report
         * A CKL Combined Report
+        * Example:
+        ```powershell
+            Export-CombinedReports -CKLFILES <Path to CKL Files (Optional)> -NESSUS <Path to Nessus Files (Optional> -output <Path to place reports> -name <IS Name> -xlsx <This is a switch you can leave it off and it will create a CSV instead>
+
+            Export-CombinedReports -CKLFILES "C:\CKLFILES" -Nessus "C:\Nessusfiles" -output "C:\Results" -name "Test-Package" -xlsx
+        ```
+        * This will create 1 or 2 files depeneding on if you provided CKL files or nessus files or both.
+        * File names are (IS Name)_CKL.(xlsx or csv) and (IS Name)_Nessus.(xlsx or csv)
 
 4. Update-Controls
     1. This updates the 8500.2 Controls export from MCCAST with the Controls failed due to STIG Findings that Map to controls
@@ -97,6 +113,8 @@ The following workflow is based on my needs. You can modify/sugest improvements 
 #Examples
 
 * Todo!!
+
+#Development
 
 #Todo List! (Help Wanted!)
 
