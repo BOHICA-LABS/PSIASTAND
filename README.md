@@ -16,11 +16,11 @@ Caveats:
 * Minimal testing. Contributions are welcome!
 * Naming conventon are subject to change. Suggestion are welcome!
 
-#Functionality
+# Functionality
 
 * Todo!
 
-#Instructions
+# Instructions
 
 ```powershell
 # One time setup
@@ -42,7 +42,7 @@ Caveats:
 
 ```
 
-##Work Flow:
+## Work Flow:
 
 The following workflow is based on my needs. You can modify/sugest improvements (Pull requests are welcome!!)
 
@@ -144,11 +144,11 @@ The following workflow is based on my needs. You can modify/sugest improvements 
         ```
         This will create 2 files: (IS Name)_Risk_Algorithm_Report.xlsx and (IS Name)_Risk_Report.xlsx
 
-#Examples
+# Examples
 
 * Todo!!
 
-#Development
+# Development
 
 1. Download pester module and install located at https://github.com/pester/Pester
     1. This is the TDD or BDD framework that this module uses for performing unit tests and end to end tests
@@ -190,7 +190,7 @@ The following workflow is based on my needs. You can modify/sugest improvements 
         1. .ps1 function files should be named according to the function name
         2. test .ps1 files should be named <function name>.tests.ps1
 
-#Todo List! (Help Wanted!)
+# Todo List! (Help Wanted!)
 
 - [ ] Complete Syntax Documentation on functions!
 - [ ] Update and further refine test scripts
@@ -202,7 +202,7 @@ The following workflow is based on my needs. You can modify/sugest improvements 
 - [ ] Tracker Creation
 - [ ] Update examples to include all supporting functions and how to use them. (Currently only the workflow is documented. There is alot more to this module than just MCCAST workflow)
 
-#Feature Requests
+# Feature Requests
 
 Please submit your feature requests!!!!!
 
