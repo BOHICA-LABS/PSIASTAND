@@ -1,4 +1,4 @@
-﻿function init-CVSS3 () {
+﻿function New-CVSS3 () {
 <#
 .SYNOPSIS
     Creates a CVSS version 3 object containing all the algorithms and function required to automate analysis
@@ -69,16 +69,16 @@ $CVSS.severityRatings  = @(
  *   undefined - if the input is a number that is not within the range of any defined severity rating.
 #>
 
-Add-Member -InputObject $CVSS ScriptMethod severityRating {
+Add-Member -InputObject $CVSS -MemberType ScriptMethod -name 'severityRating' -value {
     Param($score)
     
     $severityRatingLength = $this.severityRatings.length
 
-    $validatedScore = Number($score);
+    $validatedScore = [convert]::ToDecimal($score)
 
-    if (isNaN($validatedScore)) {
-        return $validatedScore
-    }
+    #if (isNaN($validatedScore)) {
+    #    return $validatedScore
+    #}
 
     for ($i = 0; $i -lt $severityRatingLength; $i++) {
         if ($score -ge $this.severityRatings[$i].bottom -and $score -le $this.severityRatings[$i].top) {
@@ -96,6 +96,7 @@ Add-Member -InputObject $CVSS ScriptMethod severityRating {
  * Standard JavaScript errors thrown when arithmetic operations are performed on non-numbers will be returned if the
  * given input is not a number.
 #>
+
 
 Add-Member -InputObject $CVSS ScriptMethod roundUp1 {
     Param($d)
@@ -155,6 +156,7 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
         $ModifiedIntegrity,
         $ModifiedAvailability
     )
+   
   # If input validation fails, this array is populated with strings indicating which metrics failed validation.
   [System.Collections.ArrayList]$badMetrics = @()
 
@@ -171,11 +173,11 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
   if ($Confidentiality -eq $null -or $Confidentiality -eq "") {$badMetrics.Add("C")}
   if ($Integrity -eq $null -or $Integrity -eq "") {$badMetrics.Add("I")}
   if ($Availability -eq $null -or $Availability -eq "") {$badMetrics.Add("A")}
-
+  
   if ($badMetrics.Count -gt 0) {
     return @{ Success = $false; errorType = "MissingBaseMetric"; errorMetrics = $badMetrics; }
   }
-
+  
   # STORE THE METRIC VALUES THAT WERE PASSED AS PARAMETERS
   #
   # Temporal and Environmental metrics are optional, so set them to "X" ("Not Defined") if no value was passed.
@@ -242,9 +244,9 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
   if (!($MC  -eq "X" -or $this.Weight.CIA.ContainsKey($MC)))   { $badMetrics.Add("MC") }
   if (!($MI  -eq "X" -or $this.Weight.CIA.ContainsKey($MI)))   { $badMetrics.Add("MI") }
   if (!($MA  -eq "X" -or $this.Weight.CIA.ContainsKey($MA)))   { $badMetrics.Add("MA") }
-
+  
   if ($badMetrics.Count > 0) {
-    return @{ Success = $false; errorType = "UnknownMetricValue"; errorMtrics = $badMetrics
+    return @{ Success = $false; errorType = "UnknownMetricValue"; errorMtrics = $badMetrics}
   }
 
   # GATHER WEIGHTS FOR ALL METRICS
@@ -264,19 +266,19 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
 
   # For metrics that are modified versions of Base Score metrics, e.g. Modified Attack Vector, use the value of
   # the Base Score metric if the modified version value is "X" ("Not Defined").
-  $metricWeightCR  = $this.Weight.CIAR[$CR];
+  $metricWeightCR  = $this.Weight.CIAR[$CR]
   $metricWeightIR  = $this.Weight.CIAR[$IR]
   $metricWeightAR  = $this.Weight.CIAR[$AR]
-  $metricWeightMAV = $this.Weight.AV[$(if ($MAV -ne "X") {$MAV = $AV})]
-  $metricWeightMAC = $this.Weight.AC[$(if ($MAC -ne "X") {$MAC = $AC})]
-  $metricWeightMPR = $this.Weight.PR[$(if ($MS  -ne "X") {$MS = $S})][$(if ($MPR -ne "X") {$MPR = $PR})]  # Depends on MS.
-  $metricWeightMUI = $this.Weight.UI[$(if ($MUI -ne "X") {$MUI = $UI})]
-  $metricWeightMS  = $this.Weight.S[$(if ($MS -ne "X") {$MS = $S})]
-  $metricWeightMC  = $this.Weight.CIA[$(if ($MC  -ne "X") {$MC = $C})]
-  $metricWeightMI  = $this.Weight.CIA[$(if ($MI  -ne "X") {$MI = $I})]
-  $metricWeightMA  = $this.Weight.CIA[$(if ($MA  -ne "X") {$MA = $A})]
+  $metricWeightMAV = $this.Weight.AV[$(if ($MAV -ne "X") {$MAV} else {$AV})]
+  $metricWeightMAC = $this.Weight.AC[$(if ($MAC -ne "X") {$MAC} else {$AC})]
+  $metricWeightMPR = $this.Weight.PR[$(if ($MS  -ne "X") {$MS} else {$S})][$(if ($MPR -ne "X") {$MPR} else {$PR})]  # Depends on MS.
+  $metricWeightMUI = $this.Weight.UI[$(if ($MUI -ne "X") {$MUI} else {$UI})]
+  $metricWeightMS  = $this.Weight.S[$(if ($MS -ne "X") {$MS} else {$S})]
+  $metricWeightMC  = $this.Weight.CIA[$(if ($MC  -ne "X") {$MC} else {$C})]
+  $metricWeightMI  = $this.Weight.CIA[$(if ($MI  -ne "X") {$MI} else {$I})]
+  $metricWeightMA  = $this.Weight.CIA[$(if ($MA  -ne "X") {$MA} else {$A})]
 
-
+  
   # CALCULATE THE CVSS BASE SCORE
 
   $baseScore
@@ -301,9 +303,9 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
   }
 
   # CALCULATE THE CVSS TEMPORAL SCORE
-
+  
   $temporalScore = $this.roundUp1($baseScore * $metricWeightE * $metricWeightRL * $metricWeightRC)
-
+  
   # CALCULATE THE CVSS ENVIRONMENTAL SCORE
   #
   # - envExploitabalitySubScore recalculates the Base Score Exploitability sub-score using any modified values from the
@@ -315,7 +317,7 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
   $envScore
   $envModifiedImpactSubScore
   $envModifiedExploitabalitySubScore = $this.exploitabilityCoefficient * $metricWeightMAV * $metricWeightMAC * $metricWeightMPR * $metricWeightMUI
-  [math]::
+
   $envImpactSubScoreMultiplier = [math]::Min(1 - (
                                                  (1 - $metricWeightMC * $metricWeightCR) *
                                                  (1 - $metricWeightMI * $metricWeightIR) *
@@ -332,58 +334,57 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
   if ($envModifiedImpactSubScore -le 0) {
     $envScore = 0;
   }
+  
+  # CONSTRUCT THE VECTOR STRING
+  
+  $vectorString = $this.CVSSVersionIdentifier +
+    "/AV:" + $AV +
+    "/AC:" + $AC +
+    "/PR:" + $PR +
+    "/UI:" + $UI +
+    "/S:"  + $S +
+    "/C:"  + $C +
+    "/I:"  + $I +
+    "/A:"  + $A
 
-    // CONSTRUCT THE VECTOR STRING
+  if ($E  -ne "X")  {$vectorString = $vectorString + "/E:" + $E}
+  if ($RL -ne "X")  {$vectorString = $vectorString + "/RL:" + $RL}
+  if ($RC -ne "X")  {$vectorString = $vectorString + "/RC:" + $RC}
 
-  var vectorString =
-    CVSS.CVSSVersionIdentifier +
-    "/AV:" + AV +
-    "/AC:" + AC +
-    "/PR:" + PR +
-    "/UI:" + UI +
-    "/S:"  + S +
-    "/C:"  + C +
-    "/I:"  + I +
-    "/A:"  + A;
-
-  if (E  !== "X")  {vectorString = vectorString + "/E:" + E;}
-  if (RL !== "X")  {vectorString = vectorString + "/RL:" + RL;}
-  if (RC !== "X")  {vectorString = vectorString + "/RC:" + RC;}
-
-  if (CR  !== "X") {vectorString = vectorString + "/CR:" + CR;}
-  if (IR  !== "X") {vectorString = vectorString + "/IR:"  + IR;}
-  if (AR  !== "X") {vectorString = vectorString + "/AR:"  + AR;}
-  if (MAV !== "X") {vectorString = vectorString + "/MAV:" + MAV;}
-  if (MAC !== "X") {vectorString = vectorString + "/MAC:" + MAC;}
-  if (MPR !== "X") {vectorString = vectorString + "/MPR:" + MPR;}
-  if (MUI !== "X") {vectorString = vectorString + "/MUI:" + MUI;}
-  if (MS  !== "X") {vectorString = vectorString + "/MS:"  + MS;}
-  if (MC  !== "X") {vectorString = vectorString + "/MC:"  + MC;}
-  if (MI  !== "X") {vectorString = vectorString + "/MI:"  + MI;}
-  if (MA  !== "X") {vectorString = vectorString + "/MA:"  + MA;}
+  if ($CR  -ne "X") {$vectorString = $vectorString + "/CR:" + $CR}
+  if ($IR  -ne "X") {$vectorString = $vectorString + "/IR:"  + $IR}
+  if ($AR  -ne "X") {$vectorString = $vectorString + "/AR:"  + $AR}
+  if ($MAV -ne "X") {$vectorString = $vectorString + "/MAV:" + $MAV}
+  if ($MAC -ne "X") {$vectorString = $vectorString + "/MAC:" + $MAC}
+  if ($MPR -ne "X") {$vectorString = $vectorString + "/MPR:" + $MPR}
+  if ($MUI -ne "X") {$vectorString = $vectorString + "/MUI:" + $MUI}
+  if ($MS  -ne "X") {$vectorString = $vectorString + "/MS:"  + $MS}
+  if ($MC  -ne "X") {$vectorString = $vectorString + "/MC:"  + $MC}
+  if ($MI  -ne "X") {$vectorString = $vectorString + "/MI:"  + $MI}
+  if ($MA  -ne "X") {$vectorString = $vectorString + "/MA:"  + $MA}
 
 
-  // Return an object containing the scores for all three metric groups, and an overall vector string.
+  # Return an object containing the scores for all three metric groups, and an overall vector string.
+  
+  return @{
+    Success = $true;
+    baseMetricScore = $(([math]::Round($baseScore, 1), [system.midpointrounding]::AwayFromZero)[0].ToString());
+    baseSeverity = $this.severityRating( $(([math]::Round($baseScore, 1), [System.MidpointRounding]::AwayFromZero)[0].ToString()));
 
-  return {
-    success: true,
-    baseMetricScore: baseScore.toFixed(1),
-    baseSeverity: CVSS.severityRating( baseScore.toFixed(1) ),
+    temporalMetricScore = $(([math]::Round($temporalScore, 1), [system.midpointrounding]::AwayFromZero)[0].ToString());
+    temporalSeverity = $this.severityRating( $(([math]::Round($temporalScore, 1), [System.MidpointRounding]::AwayFromZero)[0].ToString()));
 
-    temporalMetricScore: temporalScore.toFixed(1),
-    temporalSeverity: CVSS.severityRating( temporalScore.toFixed(1) ),
+    environmentalMetricScore = $(([math]::Round($envScore, 1), [system.midpointrounding]::AwayFromZero)[0].ToString());
+    environmentalSeverity = $this.severityRating( $(([math]::Round($envScore, 1), [System.MidpointRounding]::AwayFromZero)[0].ToString()));
 
-    environmentalMetricScore: envScore.toFixed(1),
-    environmentalSeverity: CVSS.severityRating( envScore.toFixed(1) ),
-
-    vectorString: vectorString
-  };
-};
+    vectorString = $vectorString
+  }
 
 }
 
 
-$object = New-Object -TypeName PSObject -Property $CVSS
+#$object = New-Object -TypeName PSObject -Property $CVSS
 
-return $object
+#return $object
+return $CVSS
 }
