@@ -382,6 +382,71 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
 
 }
 
+<# ** CVSS.calculateCVSSFromVector **
+ *
+ * Takes Base, Temporal and Environmental metric values as a single string in the Vector String format defined
+ * in the CVSS v3.0 standard definition of the Vector String.
+ *
+ * Returns Base, Temporal and Environmental scores, severity ratings, and an overall Vector String. All Base metrics
+ * are required to generate this output. All Temporal and Environmental metric values are optional. Any that are not
+ * passed default to "X" ("Not Defined").
+ *
+ * See the comment for the CVSS.calculateCVSSFromMetrics function for details on the function output. In addition to
+ * the error conditions listed for that function, this function can also return:
+ *   "MalformedVectorString", if the Vector String passed is does not conform to the format in the standard; or
+ *   "MultipleDefinitionsOfMetric", if the Vector String is well formed but defines the same metric (or metrics),
+ *                                  more than once.
+#>
+
+Add-Member -InputObject $CVSS -MemberType ScriptMethod -name 'calculateCVSSFromVector' -value {
+    Param($vectorString)
+    $metricValues = @{
+    AV = $null; AC =  $null; PR =  $null; UI =  $null; S =  $null;
+    C =   $null; I =   $null; A =   $null;
+    E =   $null; RL =  $null; RC =  $null;
+    CR =  $null; IR =  $null; AR =  $null;
+    MAV = $null; MAC = $null; MPR = $null; MUI = $null; MS = $null;
+    MC =  $null; MI =  $null; MA =  $null
+  }
+
+  # If input validation fails, this array is populated with strings indicating which metrics failed validation.
+  [System.Collections.ArrayList]$badMetrics = @()
+
+  if (!($this.vectorStringRegex_30.IsMatch($vectorString))) {
+    return @{ Success = $false; errorType = "MalformedVectorString"}
+  }
+
+  # Add 1 to the length of the CVSS Identifier to include the first slash after the Identifer
+  # So that when the split happens a $null value is not created 
+
+  $metricNameValue = $vectorString.Substring($this.CVSSVersionIdentifier.length + 1).split("/") #-join ",").Trim(",").split(",")
+
+  foreach($i in $metricNameValue) {
+    if ($metricNameValue.Contains($i)) { # Validating Input
+
+      $singleMetric = $i.split(":")
+      
+      if ($metricValues[$singleMetric[0]] -eq $null) {
+        $metricValues[$singleMetric[0]] = $singleMetric[1]
+      } else {
+        $badMetrics.Add($singleMetric[0]);
+      }
+    }
+  }
+
+  if ($badMetrics.Count -gt 0) {
+    return @{ Success = $false; errorType = "MultipleDefinitionsOfMetric"; errorMetrics = $badMetrics }
+  }
+  
+  return $this.calculateCVSSFromMetrics(
+    $metricValues.AV,  $metricValues.AC,  $metricValues.PR,  $metricValues.UI,  $metricValues.S,
+    $metricValues.C,   $metricValues.I,   $metricValues.A,
+    $metricValues.E,   $metricValues.RL,  $metricValues.RC,
+    $metricValues.CR,  $metricValues.IR,  $metricValues.AR,
+    $metricValues.MAV, $metricValues.MAC, $metricValues.MPR, $metricValues.MUI, $metricValues.MS,
+    $metricValues.MC,  $metricValues.MI,  $metricValues.MA)
+
+}
 
 #$object = New-Object -TypeName PSObject -Property $CVSS
 
