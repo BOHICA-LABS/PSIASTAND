@@ -24,7 +24,7 @@
 1.0.1 (05.23.2016)
 	-Corrected a bug that Could cause system
 	object to be displayed in the output due to 
-	multiple values found in the Risk-mapper xlsx 
+	multiple values found in the Risk-mapper xlsx
 #>
 
     [CmdletBinding()]

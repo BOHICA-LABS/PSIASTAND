@@ -37,7 +37,7 @@ $CVSS.Weight = @{
   AC =   @{ H = 0.44;  L = 0.77;};
   PR =   @{ U =       @{N = 0.85;  L = 0.62;  H = 0.27;};         # These values are used if Scope is Unchanged
             C =       @{N = 0.85;  L = 0.68;  H = 0.5;};           # These values are used if Scope is Changed
-         };        
+         };
   UI =   @{ N = 0.85;  R = 0.62;};
   S =    @{ U = 6.42;  C = 7.52;};                             # Note: not defined as constants in specification
   CIA =  @{ N = 0;     L = 0.22;  H = 0.56;};                   # C, I and A have the same weights
@@ -51,12 +51,12 @@ $CVSS.Weight = @{
 
 # Severity rating bands, as defined in the CVSS v3.0 specification.
 
-$CVSS.severityRatings  = @( 
+$CVSS.severityRatings  = @(
                           @{ name = "None";     bottom = 0.0; top =  0.0;},
                           @{ name = "Low";      bottom = 0.1; top =  3.9;},
                           @{ name = "Medium";   bottom = 4.0; top =  6.9;},
                           @{ name = "High";     bottom = 7.0; top =  8.9;},
-                          @{ name = "Critical"; bottom = 9.0; top = 10.0;} 
+                          @{ name = "Critical"; bottom = 9.0; top = 10.0;}
                          )
 
 <# ** CVSS.severityRating **
@@ -70,8 +70,8 @@ $CVSS.severityRatings  = @(
 #>
 
 Add-Member -InputObject $CVSS -MemberType ScriptMethod -name 'severityRating' -value {
-    Param($score)
-    
+		Param ($score)
+
     $severityRatingLength = $this.severityRatings.length
 
     $validatedScore = [convert]::ToDecimal($score)
@@ -155,8 +155,8 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
         $ModifiedConfidentiality,
         $ModifiedIntegrity,
         $ModifiedAvailability
-    )
-   
+		)
+
   # If input validation fails, this array is populated with strings indicating which metrics failed validation.
   [System.Collections.ArrayList]$badMetrics = @()
 
@@ -173,12 +173,12 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
   if ($Confidentiality -eq $null -or $Confidentiality -eq "") {$badMetrics.Add("C")}
   if ($Integrity -eq $null -or $Integrity -eq "") {$badMetrics.Add("I")}
   if ($Availability -eq $null -or $Availability -eq "") {$badMetrics.Add("A")}
-  
+
   if ($badMetrics.Count -gt 0) {
     return @{ Success = $false; errorType = "MissingBaseMetric"; errorMetrics = $badMetrics; }
-  }
-  
-  # STORE THE METRIC VALUES THAT WERE PASSED AS PARAMETERS
+	}
+
+		# STORE THE METRIC VALUES THAT WERE PASSED AS PARAMETERS
   #
   # Temporal and Environmental metrics are optional, so set them to "X" ("Not Defined") if no value was passed.
 
@@ -244,7 +244,7 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
   if (!($MC  -eq "X" -or $this.Weight.CIA.ContainsKey($MC)))   { $badMetrics.Add("MC") }
   if (!($MI  -eq "X" -or $this.Weight.CIA.ContainsKey($MI)))   { $badMetrics.Add("MI") }
   if (!($MA  -eq "X" -or $this.Weight.CIA.ContainsKey($MA)))   { $badMetrics.Add("MA") }
-  
+
   if ($badMetrics.Count > 0) {
     return @{ Success = $false; errorType = "UnknownMetricValue"; errorMtrics = $badMetrics}
   }
@@ -278,7 +278,7 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
   $metricWeightMI  = $this.Weight.CIA[$(if ($MI  -ne "X") {$MI} else {$I})]
   $metricWeightMA  = $this.Weight.CIA[$(if ($MA  -ne "X") {$MA} else {$A})]
 
-  
+
   # CALCULATE THE CVSS BASE SCORE
 
   $baseScore
@@ -303,7 +303,7 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
   }
 
   # CALCULATE THE CVSS TEMPORAL SCORE
-  
+
   $temporalScore = $this.roundUp1($baseScore * $metricWeightE * $metricWeightRL * $metricWeightRC)
   
   # CALCULATE THE CVSS ENVIRONMENTAL SCORE
@@ -334,9 +334,9 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
   if ($envModifiedImpactSubScore -le 0) {
     $envScore = 0;
   }
-  
+
   # CONSTRUCT THE VECTOR STRING
-  
+
   $vectorString = $this.CVSSVersionIdentifier +
     "/AV:" + $AV +
     "/AC:" + $AC +
@@ -365,7 +365,7 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
 
 
   # Return an object containing the scores for all three metric groups, and an overall vector string.
-  
+
   return @{
     Success = $true;
     baseMetricScore = $(([math]::Round($baseScore, 1), [system.midpointrounding]::AwayFromZero)[0].ToString());
@@ -417,7 +417,7 @@ Add-Member -InputObject $CVSS -MemberType ScriptMethod -name 'calculateCVSSFromV
   }
 
   # Add 1 to the length of the CVSS Identifier to include the first slash after the Identifer
-  # So that when the split happens a $null value is not created 
+  # So that when the split happens a $null value is not created
 
   $metricNameValue = $vectorString.Substring($this.CVSSVersionIdentifier.length + 1).split("/") #-join ",").Trim(",").split(",")
 
@@ -425,7 +425,7 @@ Add-Member -InputObject $CVSS -MemberType ScriptMethod -name 'calculateCVSSFromV
     if ($metricNameValue.Contains($i)) { # Validating Input
 
       $singleMetric = $i.split(":")
-      
+
       if ($metricValues[$singleMetric[0]] -eq $null) {
         $metricValues[$singleMetric[0]] = $singleMetric[1]
       } else {
@@ -437,7 +437,7 @@ Add-Member -InputObject $CVSS -MemberType ScriptMethod -name 'calculateCVSSFromV
   if ($badMetrics.Count -gt 0) {
     return @{ Success = $false; errorType = "MultipleDefinitionsOfMetric"; errorMetrics = $badMetrics }
   }
-  
+
   return $this.calculateCVSSFromMetrics(
     $metricValues.AV,  $metricValues.AC,  $metricValues.PR,  $metricValues.UI,  $metricValues.S,
     $metricValues.C,   $metricValues.I,   $metricValues.A,
