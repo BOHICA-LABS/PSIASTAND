@@ -21,6 +21,10 @@
 .VERSION
 1.0.0 (02.17.2016)
     -Intial Release
+1.0.1 (05.23.2016)
+	-Corrected a bug that Could cause system
+	object to be displayed in the output due to 
+	multiple values found in the Risk-mapper xlsx 
 #>
 
     [CmdletBinding()]
@@ -57,7 +61,11 @@
         }
 
         foreach ($element in $riskelements) {
-            $mapping = $riskmap | Where-Object {$_.Name -eq $($element.name)}
+			$mapping = $riskmap | Where-Object { $_.Name -eq $($element.name) }
+			
+			# IF mapping found more than 1 assigned first found
+			if($mapping -gt 1){$mapping = $mapping[0]}
+			
             $element."Assessed Risk Level" = $($mapping."Assessed Risk Level")
             $element."Quantitative Values" = $($mapping."Quantitative Values")
         }
