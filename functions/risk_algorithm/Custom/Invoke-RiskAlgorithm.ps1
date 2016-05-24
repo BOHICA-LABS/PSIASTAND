@@ -134,7 +134,7 @@
         $results."AVG VERY HIGH" = $VeryHighAVG
         $results."AVG HIGH" = $HighAVG
         $results."AVG MEDIUM" = $MediumAVG
-        $results."AVG LOW" = $LowCount
+        $results."AVG LOW" = $LowAVG
         $results."AVG VERY LOW" = $VeryLowAVG
         $results."Quantitative Value" = $(($results."Technical Review" * $tech) + ($results."Overall Documentation" * $docu) + ($results."Knowledge of the System" * $sysKno))
         $results."Risk Level" = $(if($results."Quantitative Value" -gt 67){"HIGH"}elseif($results."Quantitative Value" -lt 68 -and $results."Quantitative Value" -gt 32){"MEDIUM"}else{"LOW"})
