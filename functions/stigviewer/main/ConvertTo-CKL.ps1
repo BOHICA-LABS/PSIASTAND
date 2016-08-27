@@ -20,6 +20,7 @@ Path to look for
 #>
     Param(
         [Object]$Obj,
+        [ValidateRange(1,2)]
         [int]$version,
         [string]$hostn = "HOST",
         [string]$ip = "IP",
@@ -27,6 +28,13 @@ Path to look for
         [string]$type = "Computing",
         [Object]$map,
         [Parameter(Mandatory=$true)]
+        [ValidateScript({
+            if(Test-Path (split-path -path $_)){
+                $true
+            }else{
+                Throw "Invalid Path given: $_"
+            }
+        })]
         [string]$ofile
     )
     switch ($version){
