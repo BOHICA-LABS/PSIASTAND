@@ -20,6 +20,7 @@ Path to look for
 #>
     Param(
         [Object]$Obj,
+        [int]$version,
         [string]$hostn = "HOST",
         [string]$ip = "IP",
         [string]$mac = "MAC",
@@ -28,7 +29,7 @@ Path to look for
         [Parameter(Mandatory=$true)]
         [string]$ofile
     )
-    switch ($obj.StigViewer_Version | Select-Object -Unique){
+    switch ($version){
         1 {
             $Private:params = "version=`"1.0`" encoding=`"UTF-8`" standalone=`"yes`""
             $Private:w = New-Object system.xml.xmltextwriter($ofile, $null)

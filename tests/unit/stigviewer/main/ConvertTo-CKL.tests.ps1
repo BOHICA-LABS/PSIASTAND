@@ -54,20 +54,36 @@ Describe "ConvertTo-CKL PS: $PSVersion" {
 
         Set-StrictMode -Version latest
 
-        It "Should create a file (CSV)" {
+        It "Should create a ckl v1 file from (CSV)" {
             $csvfile = Import-Csv -Path "TestDrive:\Sample_Win2008R2MS.csv"
-            ConvertTo-CKL -Obj $csvfile -version $stigViewerVersion -hostn "Sample" -map $headMappers -ofile $(Join-Path $TestDrive "result\samplecsvV1.ckl")
+            ConvertTo-CKL -Obj $csvfile -version 1 -hostn "Sample" -map $headMappers -ofile $(Join-Path $TestDrive "result\samplecsvV1.ckl")
             $file = Get-Item -Path "TestDrive:\result\samplecsvV1.ckl"
             #Remove-Item "TestDrive:\result\sample.ckl"
             $file.name | Should be "samplecsvV1.ckl"
         }
 
-        It "Should create a file (XLSX) (Requires Import-XLSX)" {
+        It "Should create a ckl v2 file from (CSV)" {
+            $csvfile = Import-Csv -Path "TestDrive:\Sample_Win2008R2MS.csv"
+            ConvertTo-CKL -Obj $csvfile -version 2 -hostn "Sample" -map $headMappers -ofile $(Join-Path $TestDrive "result\samplecsvV2.ckl")
+            $file = Get-Item -Path "TestDrive:\result\samplecsvV2.ckl"
+            #Remove-Item "TestDrive:\result\sample.ckl"
+            $file.name | Should be "samplecsvV2.ckl"
+        }
+
+        It "Should create a ckl v1 file from (XLSX) (Requires Import-XLSX)" {
             $xlsxfile = Import-XLSX -Path "TestDrive:\Sample_Win2008R2MS.xlsx"
-            ConvertTo-CKL -Obj $xlsxfile -version $stigViewerVersion -hostn "Sample" -map $headMappers -ofile $(Join-Path $TestDrive "result\samplexlsxV1.ckl")
+            ConvertTo-CKL -Obj $xlsxfile -version 1 -hostn "Sample" -map $headMappers -ofile $(Join-Path $TestDrive "result\samplexlsxV1.ckl")
             $file = Get-Item -Path "TestDrive:\result\samplexlsxV1.ckl"
             #Remove-Item "TestDrive:\result\sample.ckl"
             $file.name | Should be "samplexlsxV1.ckl"
+        }
+
+        It "Should create a ckl v2 file from (XLSX) (Requires Import-XLSX)" {
+            $xlsxfile = Import-XLSX -Path "TestDrive:\Sample_Win2008R2MS.xlsx"
+            ConvertTo-CKL -Obj $xlsxfile -version 2 -hostn "Sample" -map $headMappers -ofile $(Join-Path $TestDrive "result\samplexlsxV2.ckl")
+            $file = Get-Item -Path "TestDrive:\result\samplexlsxV2.ckl"
+            #Remove-Item "TestDrive:\result\sample.ckl"
+            $file.name | Should be "samplexlsxV2.ckl"
         }
 
         It "Should create a CKL v1 file (csv) (Requires Import-XML, Import-CKL)" {
@@ -80,7 +96,14 @@ Describe "ConvertTo-CKL PS: $PSVersion" {
             $xml2.CHECKLIST.VULN | Should Be $true
         }
 
-        It "Should create a CKL v2 file (Requires Import-XML, Import-CKL)" {
+        It "Should create a CKL v2 file (csv) (Requires Import-XML, Import-CKL)" {
+            $xml3 = Import-XML -Path $(Join-Path $TestDrive "result\samplecsvV2.ckl")
+            $xml3.CHECKLIST.STIGS | Should Be $true
+        }
+
+        It "Should create a CKL v2 file (xlsx) (Requires Import-XML, Import-CKL)" {
+            $xml4 = Import-XML -Path $(Join-Path $TestDrive "result\samplexlsxV2.ckl")
+            $xml4.CHECKLIST.STIGS | Should Be $true
         }
     }
 }
