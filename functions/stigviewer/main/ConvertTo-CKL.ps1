@@ -20,17 +20,15 @@ Path to look for
 #>
     Param(
         [Object]$Obj,
-        [Parameter(Madatory=$true)]
-        [int]$version,
         [string]$hostn = "HOST",
         [string]$ip = "IP",
         [string]$mac = "MAC",
         [string]$type = "Computing",
         [Object]$map,
-        [Parameter(Madatory=$true)]
+        [Parameter(Mandatory=$true)]
         [string]$ofile
     )
-    switch ($private:version){
+    switch ($obj.StigViewer_Version | Select-Object -Unique){
         1 {
             $Private:params = "version=`"1.0`" encoding=`"UTF-8`" standalone=`"yes`""
             $Private:w = New-Object system.xml.xmltextwriter($ofile, $null)
@@ -147,404 +145,434 @@ Path to look for
             #return $Private:sw # Return XML string
         }
         2 {
-            $Private:params = "version=`"1.0`" encoding=`"UTF-8`" standalone=`"yes`""
-            $Private:w = New-Object system.xml.xmltextwriter($ofile, $null)
-            $Private:w.Formatting = [System.xml.formatting]::Indented # sets the fomrating option for the writter
-            $Private:w.WriteProcessingInstruction("xml", $Private:params) # Starts XML Document
+            $params = "version=""1.0"" encoding=""UTF-8"" standalone=""yes"""
+            $XmlWriter = New-Object system.xml.xmltextwriter($ofile, $null)
+            $XmlWriter.Formatting = "Indented"
+            $XmlWriter.Indentation = 1
+            $XmlWriter.IndentChar = "`t"
+            $XmlWriter.WriteProcessingInstruction("xml", $params) # Starts XML Document
             # Start or XML Data
-            $Private:w.WriteStartElement("CHECKLIST") # Root Element Checklist
-                $Private:w.WriteStartElement("ASSET") # ASSET Element
-                    $Private:w.WriteStartElement("ASSET_TYPE") # Asset Type Element
-                        $Private:w.WriteString($type) # Sets Asset type element data
-                    $Private:w.WriteEndElement() # End of ASSET_TYPE Element HOST_NAME
-                    $Private:w.WriteStartElement("HOST_NAME") # HOST_NAME Element
-                        $Private:w.WriteString($hostn) # Sets host_name elemnt data
-                    $Private:w.WriteEndElement() # End Host_Name Element HOST_IP
-                    $Private:w.WriteStartElement("HOST_IP") # Host_IP Element
-                        $Private:w.WriteString($ip) # Sets HOST_IP Data
-                    $Private:w.WriteEndElement() # End HOST_IP Element
-                    $Private:w.WriteStartElement("HOST_MAC") # HOST_MAC Element
-                        $Private:w.WriteString($mac) # HOST_MAC Data
-                    $Private:w.WriteEndElement() # End HOST_MAC Element
-                    $Private:w.WriteStartElement("HOST_GUID") # HOST_GUID Element
-                    $Private:w.WriteEndElement() # End HOST_GUID Elemen
-                    $Private:w.WriteStartElement("HOST_FQDN") # HOST_FQDN Element
-                    $Private:w.WriteEndElement() # End HOST_FQDN Element
-                    $Private:w.WriteStartElement("TECH_AREA") # TECH_AREA Element
-                    $Private:w.WriteEndElement() # End TECH_AREA Element
-                    $Private:w.WriteStartElement("TARGET_KEY") # TARGET_KEY Element
-                    $Private:w.WriteEndElement() # end TARGET_KEY Element
-                $Private:w.WriteEndElement() # end ASSET Element
-                $Private:w.WriteStartElement("STIGS") # STIGS Element
-                foreach($stig in ($obj.stigid | Select-Object -Unique -Property version,classification,stigid,description,filename,releaseinfo,title,uuid,notice,source)){
-                    $Private:w.WriteStartElement("iSTIG") # iSTIG Element
-                        $Private:w.WriteStartElement("STIG_INFO") # STIG_INFO Element
+            $XmlWriter.WriteStartElement("CHECKLIST") # Root Element Checklist
+                $XmlWriter.WriteStartElement("ASSET") # ASSET Element
+                    $XmlWriter.WriteStartElement("ASSET_TYPE") # Asset Type Element
+                        $XmlWriter.WriteString($type) # Sets Asset type element data
+                    $XmlWriter.WriteEndElement() # End of ASSET_TYPE Element HOST_NAME
+                    $XmlWriter.WriteStartElement("HOST_NAME") # HOST_NAME Element
+                        $XmlWriter.WriteString($hostn) # Sets host_name elemnt data
+                    $XmlWriter.WriteEndElement() # End Host_Name Element HOST_IP
+                    $XmlWriter.WriteStartElement("HOST_IP") # Host_IP Element
+                        $XmlWriter.WriteString($ip) # Sets HOST_IP Data
+                    $XmlWriter.WriteEndElement() # End HOST_IP Element
+                    $XmlWriter.WriteStartElement("HOST_MAC") # HOST_MAC Element
+                        $XmlWriter.WriteString($mac) # HOST_MAC Data
+                    $XmlWriter.WriteEndElement() # End HOST_MAC Element
+                    $XmlWriter.WriteStartElement("HOST_GUID") # HOST_GUID Element
+                    $XmlWriter.WriteEndElement() # End HOST_GUID Elemen
+                    $XmlWriter.WriteStartElement("HOST_FQDN") # HOST_FQDN Element
+                    $XmlWriter.WriteEndElement() # End HOST_FQDN Element
+                    $XmlWriter.WriteStartElement("TECH_AREA") # TECH_AREA Element
+                    $XmlWriter.WriteEndElement() # End TECH_AREA Element
+                    $XmlWriter.WriteStartElement("TARGET_KEY") # TARGET_KEY Element
+                    $XmlWriter.WriteEndElement() # end TARGET_KEY Element
+                $XmlWriter.WriteEndElement() # end ASSET Element
+                $XmlWriter.WriteStartElement("STIGS") # STIGS Element
+                $stigProperties = @("version","classification","stigid","description","filename","releaseinfo","title","uuid","notice","source")
+                foreach($stig in ($obj | Select-Object -Unique -Property $stigProperties)){
+                    $XmlWriter.WriteStartElement("iSTIG") # iSTIG Element
+                        $XmlWriter.WriteStartElement("STIG_INFO") # STIG_INFO Element
 
                             #version
-                            $Private:w.WriteStartElement("SI_DATA") # SI_DATA Element
-                                $Private:w.WriteStartElement("SID_NAME") # SID_NAME Element
-                                    $Private:w.WriteString("version") # Sets version elemnt data
-                                $Private:w.WriteEndElement() # end SID_NAME Element
-                                $Private:w.WriteStartElement("SID_DATA") # SSID_DATA Element
-                                    $Private:w.WriteString("$obj.version") # Sets version elemnt data
-                                $Private:w.WriteEndElement() # end SID_DATA Element
-                            $Private:w.WriteEndElement() # end SI_DATA Element
+                            $XmlWriter.WriteStartElement("SI_DATA") # SI_DATA Element
+                                $XmlWriter.WriteStartElement("SID_NAME") # SID_NAME Element
+                                    $XmlWriter.WriteString("version") # Sets version elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_NAME Element
+                                $XmlWriter.WriteStartElement("SID_DATA") # SSID_DATA Element
+                                    $XmlWriter.WriteString($stig.version) # Sets version elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_DATA Element
+                            $XmlWriter.WriteEndElement() # end SI_DATA Element
 
                             #classification
-                            $Private:w.WriteStartElement("SI_DATA") # SI_DATA Element
-                                $Private:w.WriteStartElement("SID_NAME") # SID_NAME Element
-                                    $Private:w.WriteString("classification") # Sets classification elemnt data
-                                $Private:w.WriteEndElement() # end SID_NAME Element
-                                $Private:w.WriteStartElement("SID_DATA") # SSID_DATA Element
-                                    $Private:w.WriteString($($stig.classification)) # Sets classification elemnt data
-                                $Private:w.WriteEndElement() # end SID_DATA Elemen
-                            $Private:w.WriteEndElement() # end SI_DATA Elemen
+                            $XmlWriter.WriteStartElement("SI_DATA") # SI_DATA Element
+                                $XmlWriter.WriteStartElement("SID_NAME") # SID_NAME Element
+                                    $XmlWriter.WriteString("classification") # Sets classification elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_NAME Element
+                                $XmlWriter.WriteStartElement("SID_DATA") # SSID_DATA Element
+                                    $XmlWriter.WriteString($($stig.classification)) # Sets classification elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_DATA Elemen
+                            $XmlWriter.WriteEndElement() # end SI_DATA Elemen
 
                             #customname
-                            $Private:w.WriteStartElement("SI_DATA") # SI_DATA Element
-                                $Private:w.WriteStartElement("SID_NAME") # SID_NAME Element
-                                    $Private:w.WriteString("customname") # Sets customname elemnt data
-                                $Private:w.WriteEndElement() # end SID_NAME Element
-                            $Private:w.WriteEndElement() # end SI_DATA Element
+                            $XmlWriter.WriteStartElement("SI_DATA") # SI_DATA Element
+                                $XmlWriter.WriteStartElement("SID_NAME") # SID_NAME Element
+                                    $XmlWriter.WriteString("customname") # Sets customname elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_NAME Element
+                            $XmlWriter.WriteEndElement() # end SI_DATA Element
 
                             #stigid
-                            $Private:w.WriteStartElement("SI_DATA") # SI_DATA Element
-                                $Private:w.WriteStartElement("SID_NAME") # SID_NAME Element
-                                    $Private:w.WriteString("stigid") # Sets stigid elemnt data
-                                $Private:w.WriteEndElement() # end SID_NAME Element
-                                $Private:w.WriteStartElement("SID_DATA") # SSID_DATA Element
-                                    $Private:w.WriteString($($stig.stigid)) # Sets stigid elemnt data
-                                $Private:w.WriteEndElement() # end SID_DATA Element
-                            $Private:w.WriteEndElement() # end SI_DATA Element
+                            $XmlWriter.WriteStartElement("SI_DATA") # SI_DATA Element
+                                $XmlWriter.WriteStartElement("SID_NAME") # SID_NAME Element
+                                    $XmlWriter.WriteString("stigid") # Sets stigid elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_NAME Element
+                                $XmlWriter.WriteStartElement("SID_DATA") # SSID_DATA Element
+                                    $XmlWriter.WriteString($($stig.stigid)) # Sets stigid elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_DATA Element
+                            $XmlWriter.WriteEndElement() # end SI_DATA Element
 
                             #description
-                            $Private:w.WriteStartElement("SI_DATA") # SI_DATA Element
-                                $Private:w.WriteStartElement("SID_NAME") # SID_NAME Element
-                                    $Private:w.WriteString("description") # Sets description elemnt data
-                                $Private:w.WriteEndElement() # end SID_NAME Element
-                                $Private:w.WriteStartElement("SID_DATA") # SSID_DATA Element
-                                    $Private:w.WriteString($($stig.description)) # Sets description elemnt data
-                                $Private:w.WriteEndElement() # end SID_DATA Element
-                            $Private:w.WriteEndElement() # end SI_DATA Element
+                            $XmlWriter.WriteStartElement("SI_DATA") # SI_DATA Element
+                                $XmlWriter.WriteStartElement("SID_NAME") # SID_NAME Element
+                                    $XmlWriter.WriteString("description") # Sets description elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_NAME Element
+                                $XmlWriter.WriteStartElement("SID_DATA") # SSID_DATA Element
+                                    $XmlWriter.WriteString($($stig.description)) # Sets description elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_DATA Element
+                            $XmlWriter.WriteEndElement() # end SI_DATA Element
 
                             #filename
-                            $Private:w.WriteStartElement("SI_DATA") # SI_DATA Element
-                                $Private:w.WriteStartElement("SID_NAME") # SID_NAME Element
-                                    $Private:w.WriteString("filename") # Sets filename elemnt data
-                                $Private:w.WriteEndElement() # end SID_NAME Element
-                                $Private:w.WriteStartElement("SID_DATA") # SSID_DATA Element
-                                    $Private:w.WriteString($($stig.filename)) # Sets filename elemnt data
-                                $Private:w.WriteEndElement() # end SID_DATA Element
-                            $Private:w.WriteEndElement() # end SI_DATA Element
+                            $XmlWriter.WriteStartElement("SI_DATA") # SI_DATA Element
+                                $XmlWriter.WriteStartElement("SID_NAME") # SID_NAME Element
+                                    $XmlWriter.WriteString("filename") # Sets filename elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_NAME Element
+                                $XmlWriter.WriteStartElement("SID_DATA") # SSID_DATA Element
+                                    $XmlWriter.WriteString($($stig.filename)) # Sets filename elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_DATA Element
+                            $XmlWriter.WriteEndElement() # end SI_DATA Element
 
                             #releaseinfo
-                            $Private:w.WriteStartElement("SI_DATA") # SI_DATA Element
-                                $Private:w.WriteStartElement("SID_NAME") # SID_NAME Element
-                                    $Private:w.WriteString("releaseinfo") # Sets releaseinfo elemnt data
-                                $Private:w.WriteEndElement() # end SID_NAME Element
-                                $Private:w.WriteStartElement("SID_DATA") # SSID_DATA Element
-                                    $Private:w.WriteString($($stig.releaseinfo)) # Sets releaseinfo elemnt data
-                                $Private:w.WriteEndElement() # end SID_DATA Element
-                            $Private:w.WriteEndElement() # end SI_DATA Element
+                            $XmlWriter.WriteStartElement("SI_DATA") # SI_DATA Element
+                                $XmlWriter.WriteStartElement("SID_NAME") # SID_NAME Element
+                                    $XmlWriter.WriteString("releaseinfo") # Sets releaseinfo elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_NAME Element
+                                $XmlWriter.WriteStartElement("SID_DATA") # SSID_DATA Element
+                                    $XmlWriter.WriteString($($stig.releaseinfo)) # Sets releaseinfo elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_DATA Element
+                            $XmlWriter.WriteEndElement() # end SI_DATA Element
 
                             #title
-                            $Private:w.WriteStartElement("SI_DATA") # SI_DATA Element
-                                $Private:w.WriteStartElement("SID_NAME") # SID_NAME Element
-                                    $Private:w.WriteString("title") # Sets title elemnt data
-                                $Private:w.WriteEndElement() # end SID_NAME Element
-                                $Private:w.WriteStartElement("SID_DATA") # SSID_DATA Element
-                                    $Private:w.WriteString($($stig.title)) # Sets title elemnt data
-                                $Private:w.WriteEndElement() # end SID_DATA Element
-                            $Private:w.WriteEndElement() # end SI_DATA Element
+                            $XmlWriter.WriteStartElement("SI_DATA") # SI_DATA Element
+                                $XmlWriter.WriteStartElement("SID_NAME") # SID_NAME Element
+                                    $XmlWriter.WriteString("title") # Sets title elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_NAME Element
+                                $XmlWriter.WriteStartElement("SID_DATA") # SSID_DATA Element
+                                    $XmlWriter.WriteString($($stig.title)) # Sets title elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_DATA Element
+                            $XmlWriter.WriteEndElement() # end SI_DATA Element
 
                             #uuid
-                            $Private:w.WriteStartElement("SI_DATA") # SI_DATA Element
-                                $Private:w.WriteStartElement("SID_NAME") # SID_NAME Element
-                                    $Private:w.WriteString("uuid") # Sets uuid elemnt data
-                                $Private:w.WriteEndElement() # end SID_NAME Element
-                                $Private:w.WriteStartElement("SID_DATA") # SSID_DATA Element
-                                    $Private:w.WriteString($($stig.uuid)) # Sets uuid elemnt data
-                                $Private:w.WriteEndElement() # end SID_DATA Element
-                            $Private:w.WriteEndElement() # end SI_DATA Element
+                            $XmlWriter.WriteStartElement("SI_DATA") # SI_DATA Element
+                                $XmlWriter.WriteStartElement("SID_NAME") # SID_NAME Element
+                                    $XmlWriter.WriteString("uuid") # Sets uuid elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_NAME Element
+                                $XmlWriter.WriteStartElement("SID_DATA") # SSID_DATA Element
+                                    $XmlWriter.WriteString($($stig.uuid)) # Sets uuid elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_DATA Element
+                            $XmlWriter.WriteEndElement() # end SI_DATA Element
 
                             #notice
-                            $Private:w.WriteStartElement("SI_DATA") # SI_DATA Element
-                                $Private:w.WriteStartElement("SID_NAME") # SID_NAME Element
-                                    $Private:w.WriteString("notice") # Sets notice elemnt data
-                                $Private:w.WriteEndElement() # end SID_NAME Element
-                                $Private:w.WriteStartElement("SID_DATA") # SSID_DATA Element
-                                    $Private:w.WriteString($($stig.notice)) # Sets notice elemnt data
-                                $Private:w.WriteEndElement() # end SID_DATA Element
-                            $Private:w.WriteEndElement() # end SI_DATA Element
+                            $XmlWriter.WriteStartElement("SI_DATA") # SI_DATA Element
+                                $XmlWriter.WriteStartElement("SID_NAME") # SID_NAME Element
+                                    $XmlWriter.WriteString("notice") # Sets notice elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_NAME Element
+                                $XmlWriter.WriteStartElement("SID_DATA") # SSID_DATA Element
+                                    $XmlWriter.WriteString($($stig.notice)) # Sets notice elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_DATA Element
+                            $XmlWriter.WriteEndElement() # end SI_DATA Element
 
                             #source
-                            $Private:w.WriteStartElement("SI_DATA") # SI_DATA Element
-                                $Private:w.WriteStartElement("SID_NAME") # SID_NAME Element
-                                    $Private:w.WriteString("source") # Sets source elemnt data
-                                $Private:w.WriteEndElement() # end SID_NAME Element
-                                $Private:w.WriteStartElement("SID_DATA") # SSID_DATA Element
-                                    $Private:w.WriteString($($stig.source)) # Sets source elemnt data
-                                $Private:w.WriteEndElement() # end SID_DATA Element
-                            $Private:w.WriteEndElement() # end SI_DATA Element
+                            $XmlWriter.WriteStartElement("SI_DATA") # SI_DATA Element
+                                $XmlWriter.WriteStartElement("SID_NAME") # SID_NAME Element
+                                    $XmlWriter.WriteString("source") # Sets source elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_NAME Element
+                                $XmlWriter.WriteStartElement("SID_DATA") # SSID_DATA Element
+                                    $XmlWriter.WriteString($($stig.source)) # Sets source elemnt data
+                                $XmlWriter.WriteEndElement() # end SID_DATA Element
+                            $XmlWriter.WriteEndElement() # end SI_DATA Element
 
-                        $Private:w.WriteEndElement() # end STIG_INFO Element
-                        $Private:w.WriteStartElement("VULN") # VULN Element
+                        $XmlWriter.WriteEndElement() # end STIG_INFO Element                        
                         foreach($Private:row in $Obj | Where-Object { $stig.stigid -eq $_.stigid }){
+                            $XmlWriter.WriteStartElement("VULN") # VULN Element
 
-                            #Vuln_Num
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Vuln_Num") # Sets Vuln_Num elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Vuln_Num)) # Sets Vuln_Num elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Vuln_Num
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Vuln_Num") # Sets Vuln_Num elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Vuln_Num)) # Sets Vuln_Num elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Severity
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Severity") # Sets Severity elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Severity)) # Sets Severity elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Severity
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Severity") # Sets Severity elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Severity)) # Sets Severity elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Group_Title
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Group_Title") # Sets Group_Title elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Group_Title)) # Sets Group_Title elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Group_Title
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Group_Title") # Sets Group_Title elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Group_Title)) # Sets Group_Title elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Rule_ID
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Rule_ID") # Sets Rule_ID elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Rule_ID)) # Sets Rule_ID elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Rule_ID
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Rule_ID") # Sets Rule_ID elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Rule_ID)) # Sets Rule_ID elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Rule_Ver
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Rule_Ver") # Sets Rule_Ver elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Rule_Ver)) # Sets Rule_Ver elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Rule_Ver
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Rule_Ver") # Sets Rule_Ver elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Rule_Ver)) # Sets Rule_Ver elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Rule_Title
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Rule_Title") # Sets Rule_Title elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Rule_Title)) # Sets Rule_Title elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Rule_Title
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Rule_Title") # Sets Rule_Title elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Rule_Title)) # Sets Rule_Title elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Vuln_Discuss
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Vuln_Discuss") # Sets Vuln_Discuss elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Vuln_Discuss)) # Sets Vuln_Discuss elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Vuln_Discuss
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Vuln_Discuss") # Sets Vuln_Discuss elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Vuln_Discuss)) # Sets Vuln_Discuss elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #IA_Controls
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("IA_Controls") # Sets IA_Controls elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.IA_Controls)) # Sets IA_Controls elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #IA_Controls
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("IA_Controls") # Sets IA_Controls elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.IA_Controls)) # Sets IA_Controls elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Check_Content
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Check_Content") # Sets Check_Content elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Check_Content)) # Sets Check_Content elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Check_Content
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Check_Content") # Sets Check_Content elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Check_Content)) # Sets Check_Content elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Fix_Text
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Fix_Text") # Sets Fix_Text elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Fix_Text)) # Sets Fix_Text elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Fix_Text
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Fix_Text") # Sets Fix_Text elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Fix_Text)) # Sets Fix_Text elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #False_Positives
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("False_Positives") # Sets False_Positives elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.False_Positives)) # Sets False_Positives elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #False_Positives
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("False_Positives") # Sets False_Positives elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.False_Positives)) # Sets False_Positives elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #False_Negatives
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("False_Negatives") # Sets False_Negatives elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.False_Negatives)) # Sets False_Negatives elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #False_Negatives
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("False_Negatives") # Sets False_Negatives elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.False_Negatives)) # Sets False_Negatives elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Documentable
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Documentable") # Sets Documentable elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Documentable)) # Sets Documentable elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Documentable
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Documentable") # Sets Documentable elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Documentable)) # Sets Documentable elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Mitigations
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Mitigations") # Sets Mitigations elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Mitigations)) # Sets Mitigations elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Mitigations
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Mitigations") # Sets Mitigations elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Mitigations)) # Sets Mitigations elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Potential_Impact
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Potential_Impact") # Sets Potential_Impact elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Potential_Impact)) # Sets Potential_Impact elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Potential_Impact
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Potential_Impact") # Sets Potential_Impact elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Potential_Impact)) # Sets Potential_Impact elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Third_Party_Tools
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Third_Party_Tools") # Sets Third_Party_Tools elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Third_Party_Tools)) # Sets Third_Party_Tools elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Third_Party_Tools
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Third_Party_Tools") # Sets Third_Party_Tools elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Third_Party_Tools)) # Sets Third_Party_Tools elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Mitigation_Control
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Third_Party_Tools") # Sets Mitigation_Control elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Third_Party_Tools)) # Sets Third_Party_Tools elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Mitigation_Control
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Third_Party_Tools") # Sets Mitigation_Control elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Third_Party_Tools)) # Sets Third_Party_Tools elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Responsibility
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Responsibility") # Sets Responsibility elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Responsibility)) # Sets Responsibility elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Responsibility
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Responsibility") # Sets Responsibility elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Responsibility)) # Sets Responsibility elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Security_Override_Guidance
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Security_Override_Guidance") # Sets Security_Override_Guidance elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Security_Override_Guidance)) # Sets Security_Override_Guidance elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Security_Override_Guidance
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Security_Override_Guidance") # Sets Security_Override_Guidance elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Security_Override_Guidance)) # Sets Security_Override_Guidance elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Check_Content_Ref
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Check_Content_Ref") # Sets Check_Content_Ref elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Check_Content_Ref)) # Sets Check_Content_Ref elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Check_Content_Ref
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Check_Content_Ref") # Sets Check_Content_Ref elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Check_Content_Ref)) # Sets Check_Content_Ref elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #Class
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("Class") # Sets Class elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.Class)) # Sets Class elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #Class
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("Class") # Sets Class elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.Class)) # Sets Class elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #STIGRef
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("STIGRef") # Sets STIGRef elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.STIGRef)) # Sets STIGRef elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #STIGRef
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("STIGRef") # Sets STIGRef elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.STIGRef)) # Sets STIGRef elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #TargetKey
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("TargetKey") # Sets TargetKey elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.TargetKey)) # Sets TargetKey elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #TargetKey
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("TargetKey") # Sets TargetKey elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.TargetKey)) # Sets TargetKey elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #CCI_REF
-                            $Private:w.WriteStartElement("STIG_DATA") # STIG_DATA Element
-                                $Private:w.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
-                                    $Private:w.WriteString("CCI_REF") # Sets CCI_REF elemnt data
-                                $Private:w.WriteEndElement() # end VULN_ATTRIBUTE Element
-                                $Private:w.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                    $Private:w.WriteString($($row.CCI_REF)) # Sets CCI_REF elemnt data
-                                $Private:w.WriteEndElement() # end ATTRIBUTE_DATA Element
-                            $Private:w.WriteEndElement() # end STIG_DATA Element
+                                #CCI_REF
+                                $XmlWriter.WriteStartElement("STIG_DATA") # STIG_DATA Element
+                                    $XmlWriter.WriteStartElement("VULN_ATTRIBUTE") # VULN_ATTRIBUTE Element
+                                        $XmlWriter.WriteString("CCI_REF") # Sets CCI_REF elemnt data
+                                    $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
+                                    $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
+                                        $XmlWriter.WriteString($($row.CCI_REF)) # Sets CCI_REF elemnt data
+                                    $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
+                                $XmlWriter.WriteEndElement() # end STIG_DATA Element
 
-                            #STATUS
-                            $Private:w.WriteStartElement("STATUS") # STATUS Element
-                                #$Private:w.WriteString("CCI_REF") # Sets STATUS elemnt data
-                            $Private:w.WriteEndElement() # end STATUS Element
+                                #STATUS
+                                $XmlWriter.WriteStartElement("STATUS") # STATUS Element
+                                    $XmlWriter.WriteString($row.status) # Sets STATUS elemnt data
+                                $XmlWriter.WriteEndElement() # end STATUS Element
 
+                                #FINDING_DETAILS
+                                $XmlWriter.WriteStartElement("FINDING_DETAILS") # FINDING_DETAILS Element
+                                    $XmlWriter.WriteString($row.Finding_Details) # Sets FINDING_DETAILS elemnt data
+                                $XmlWriter.WriteEndElement() # end FINDING_DETAILS Element
 
+                                #COMMENTS
+                                $XmlWriter.WriteStartElement("COMMENTS") # COMMENTS Element
+                                    $XmlWriter.WriteString($row.Comments) # Sets COMMENTS elemnt data
+                                $XmlWriter.WriteEndElement() # end COMMENTS Element
+
+                                #Severity_Override
+                                $XmlWriter.WriteStartElement("SEVERITY_OVERRIDE") # Severity_Override Element
+                                    $XmlWriter.WriteString($row.Severity_Override) # Sets Severity_Override elemnt data
+                                $XmlWriter.WriteEndElement() # end Severity_Override Element
+
+                                #Severity_Justification
+                                $XmlWriter.WriteStartElement("SEVERITY_JUSTIFICATION") # Severity_Justification Element
+                                    $XmlWriter.WriteString($row.Severity_Justification) # Sets Severity_Justification elemnt data
+                                $XmlWriter.WriteEndElement() # end Severity_Justification Element
+
+                            $XmlWriter.WriteEndElement() # end VULN Element
                         }
-                        $Private:w.WriteEndElement() # end VULN Element
-                    $Private:w.WriteEndElement() # end iSTIG Element
+                    $XmlWriter.WriteEndElement() # end iSTIG Element
                 }
-                $Private:w.WriteEndElement() # end STIGS Element
-            $Private:w.WriteEndElement() # end CHECKLIST Element
+                $XmlWriter.WriteEndElement() # end STIGS Element
+            $XmlWriter.WriteEndElement() # end CHECKLIST Element
+            # Finish Document
+            $XmlWriter.Flush()
+            $XmlWriter.Close()
         }
     }
 }
 
-$testckl | Select-Object -Unique -Property version,classification,stigid,description,filename,releaseinfo,title,uuid,notice,source
+#Set-ExecutionPolicy Bypass -scope Process
+#Import-Module .\PSIASTAND.psd1 -force
+#$file = Get-Item -Path .\tests\data\CKL\CKLv2\sampleV2.ckl
+#$xml = Import-XML -fileobj $file
+#$ckl = import-ckl -doc $xml
+#ConvertTo-CKL -Obj $ckl -version 2 -ofile "C:\Users\Zious\Documents\repo.opencybersec.org\PSIASTAND\test2.ckl"
