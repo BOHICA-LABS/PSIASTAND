@@ -212,30 +212,14 @@ Path to look for
                                 $XmlWriter.WriteEndElement() # end STIG_DATA Element
                             }
 
-                                #STATUS
-                                $XmlWriter.WriteStartElement("STATUS") # STATUS Element
-                                    $XmlWriter.WriteString($row.status) # Sets STATUS elemnt data
-                                $XmlWriter.WriteEndElement() # end STATUS Element
+                            $statusProperties = @("STATUS","FINDING_DETAILS","COMMENTS","SEVERITY_OVERRIDE","SEVERITY_JUSTIFICATION")
+                            foreach($property in $statusProperties ){
 
-                                #FINDING_DETAILS
-                                $XmlWriter.WriteStartElement("FINDING_DETAILS") # FINDING_DETAILS Element
-                                    $XmlWriter.WriteString($row.Finding_Details) # Sets FINDING_DETAILS elemnt data
-                                $XmlWriter.WriteEndElement() # end FINDING_DETAILS Element
-
-                                #COMMENTS
-                                $XmlWriter.WriteStartElement("COMMENTS") # COMMENTS Element
-                                    $XmlWriter.WriteString($row.Comments) # Sets COMMENTS elemnt data
-                                $XmlWriter.WriteEndElement() # end COMMENTS Element
-
-                                #Severity_Override
-                                $XmlWriter.WriteStartElement("SEVERITY_OVERRIDE") # Severity_Override Element
-                                    $XmlWriter.WriteString($row.Severity_Override) # Sets Severity_Override elemnt data
-                                $XmlWriter.WriteEndElement() # end Severity_Override Element
-
-                                #Severity_Justification
-                                $XmlWriter.WriteStartElement("SEVERITY_JUSTIFICATION") # Severity_Justification Element
-                                    $XmlWriter.WriteString($row.Severity_Justification) # Sets Severity_Justification elemnt data
-                                $XmlWriter.WriteEndElement() # end Severity_Justification Element
+                                #This loops through all $statusProperties and builds them into the xml
+                                $XmlWriter.WriteStartElement($property) # Sets element name for current Property
+                                    $XmlWriter.WriteString($($row.$($property))) # Sets element data for current Property
+                                $XmlWriter.WriteEndElement() # end element for current Property
+                            }
 
                             $XmlWriter.WriteEndElement() # end VULN Element
                         }
@@ -249,10 +233,3 @@ Path to look for
         }
     }
 }
-
-#Set-ExecutionPolicy Bypass -scope Process
-#Import-Module .\PSIASTAND.psd1 -force
-#$file = Get-Item -Path .\tests\data\CKL\CKLv2\sampleV2.ckl
-#$xml = Import-XML -fileobj $file
-#$ckl = import-ckl -doc $xml
-#ConvertTo-CKL -Obj $ckl -version 2 -ofile "C:\Users\Zious\Documents\repo.opencybersec.org\PSIASTAND\test2.ckl"
