@@ -52,11 +52,5 @@
     <Folder>functions\xml\main</Folder>
     <Folder>functions\xml</Folder>
   </OpenFolders>
-  <OpenFiles>
-    <File>functions\support\ConvertTo-RiskElements.ps1</File>
-    <File>functions\reports\Export-RiskElements.ps1</File>
-    <File>functions\IAConrols\Import-DIACAP.ps1</File>
-    <File>tests\unit\IAControls\Import-DIACAP.tests.ps1</File>
-    <File>functions\risk_algorithm\Custom\Invoke-RiskAlgorithm.ps1</File>
-  </OpenFiles>
+  <OpenFiles />
 </ProjectState>
