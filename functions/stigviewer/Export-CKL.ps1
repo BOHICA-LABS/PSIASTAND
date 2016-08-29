@@ -43,7 +43,6 @@ Export-CKL -Path C: -Out C:\Results -Version 1 -Recursive
 
     BEGIN {
         if ($version -eq 1){ # Needs to be updated to support version 2 of the STIG Viewer
-            $stigViewerVersion = "DISA STIG Viewer : 1.2.0"
             $headMappers = [ordered]@{ # Change the value of the hastable key values to match the headers of the sheet your importing # Maybe needed [ordered]
                 "Vuln_Num"="Vuln ID"
                 "Severity"="Severity"
@@ -77,7 +76,7 @@ Export-CKL -Path C: -Out C:\Results -Version 1 -Recursive
                 "SEVERITY_JUSTIFICATION"= "Severity Override Justification"
             }
         }
-        Else{
+        Elseif($version -eq 2){
             $stigViewerVersion = "DISA STIG Viewer : 1.2.0"
             $headMappers = [ordered]@{ # Change the value of the hastable key values to match the headers of the sheet your importing # Maybe needed [ordered]
                 "Vuln_Num"="Vuln ID"
@@ -137,7 +136,7 @@ Export-CKL -Path C: -Out C:\Results -Version 1 -Recursive
             Else {
                 Throw "An error has occured"
             }
-            ConvertTo-CKL -Obj $Private:importfile -version $stigViewerVersion -hostn $Private:filehostname -map $headMappers -ofile "$($Out)\$($Private:filename)" # Create and Write the ckl file
+            ConvertTo-CKL -Obj $Private:importfile -version $version -hostn $Private:filehostname -map $headMappers -ofile "$($Out)\$($Private:filename)" # Create and Write the ckl file
         }
     }
 }
