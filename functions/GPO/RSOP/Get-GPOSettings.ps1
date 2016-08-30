@@ -2,22 +2,27 @@
 {
   <#
       .SYNOPSIS
-      A brief description of the Get-GPOSettings function.
+      Get-GPOSettings function pulls the RSOP XML report and parses out information.
 	
       .DESCRIPTION
       A detailed description of the Get-GPOSettings function.
-	
+      	
       .PARAMETER RsopXML
-      A description of the Path parameter.
+      Full file path to the previously generated RSOP XML.
 
       .PARAMETER output
-      A description of the Path parameter.
+      This is the output folder that you want Both the RSOP XML Created as well as the RSOP Report.
 
       .PARAMETER ComputerName
-      A description of the Path parameter.
+      This is the name of the computer that you want to pull the RSOP Data for. IF not set it defualts to the current.
 	
       .EXAMPLE
-      PS C:\> Get-GPOSettings -Path $value1
+
+      # Import and parse a previously generated RSOP XML File
+      PS C:\> Get-GPOSettings -RsopXML <path to RSOP xml file> -output <Folder Path to Output report location>
+
+      #Generate and Parse the RSOP XML for the given host
+      PS C:\> Get-GPOSettings -output <Folder Path to Output report location> -ComputerName <Name of the system you want to pull RSOP from>
 	
       .NOTES
       Additional information about the function.
