@@ -15,6 +15,9 @@
 
       .PARAMETER ComputerName
       This is the name of the computer that you want to pull the RSOP Data for. IF not set it defualts to the current.
+
+      .PARAMETER PassThru
+      This will return the parsed content to memory
 	
       .EXAMPLE
 
@@ -36,8 +39,9 @@
   param
   (
     [string]$RsopXML = $null,
-    [string]$output,
-    [string]$ComputerName = $(if(!$ComputerName){$env:COMPUTERNAME})
+    [string]$output = $null,
+    [string]$ComputerName = $(if(!$ComputerName){$env:COMPUTERNAME}),
+    [switch]$PassThru
   )
 
 	
@@ -292,7 +296,15 @@
         }
       }
 
-      # Output the results from the parser
-      $results | Export-Csv -NoTypeInformation -Path $("$($output)\{0}_{1}_{2}.csv" -f $ComputerName, $nameOfReport, $dateOfReport)
-
+      if ($output)
+      {
+        # Output the results from the parser
+        $results | Export-Csv -NoTypeInformation -Path $("$($output)\{0}_{1}_{2}.csv" -f $ComputerName, $nameOfReport, $dateOfReport)
+      }
+      
+      if ($PassThru)
+      {
+        # Return results of the RSOP Parse to memory
+        return $results
+      }
     }
