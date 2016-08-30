@@ -25,6 +25,12 @@
 	-Corrected a bug that Could cause system
 	object to be displayed in the output due to 
 	multiple values found in the Risk-mapper xlsx 
+1.0.2 (08/29/2016)
+    -Removed the logic that checks for more then 1 item 
+    from the Risk-Mapper.  Duplicates should be handled
+    before this point via data validation.  If multiple 
+    items are passed through the script will choose the
+    first object.
 #>
 
     [CmdletBinding()]
@@ -64,7 +70,8 @@
 			$mapping = $riskmap | Where-Object { $_.Name -eq $($element.name) }
 			
 			# IF mapping found more than 1 assigned first found
-			if($mapping -gt 1){$mapping = $mapping[0]}
+			#if($mapping -gt 1){$mapping = $mapping[0]}
+            $mapping = $mapping[0]
 			
             $element."Assessed Risk Level" = $($mapping."Assessed Risk Level")
             $element."Quantitative Values" = $($mapping."Quantitative Values")
