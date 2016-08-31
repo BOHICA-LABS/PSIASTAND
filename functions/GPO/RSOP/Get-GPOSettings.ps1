@@ -3,10 +3,10 @@
   <#
       .SYNOPSIS
       Get-GPOSettings function pulls the RSOP XML report and parses out information.
-	
+
       .DESCRIPTION
       A detailed description of the Get-GPOSettings function.
-      	
+
       .PARAMETER RsopXML
       Full file path to the previously generated RSOP XML.
 
@@ -18,7 +18,7 @@
 
       .PARAMETER PassThru
       This will return the parsed content to memory
-	
+
       .EXAMPLE
 
       # Import and parse a previously generated RSOP XML File
@@ -26,7 +26,7 @@
 
       #Generate and Parse the RSOP XML for the given host
       PS C:\> Get-GPOSettings -output <Folder Path to Output report location> -ComputerName <Name of the system you want to pull RSOP from>
-	
+
       .NOTES
       Additional information about the function.
 
@@ -34,7 +34,7 @@
       1.0.0.0 (0829.2016)
         - Intial Release
   #>
-  
+
   [CmdletBinding()]
   param
   (
@@ -44,25 +44,25 @@
     [switch]$PassThru
   )
 
-	
+
       # Formating Varibles
       $nameOfReport = 'GPResultantSetOfPolicy' # Set Name of Report
       $dateOfReport = $(Get-Date -Format '\Dyyyy-MM-dd\THH.mm.ss') # Format date Example: D2016-08-23T14.34.13 (D stands for Date and T stands for Time (Usefull for parsing file name))
-	
+
       # Get the resulting set of policy for the current system if $RsopXML is not defined
       if (!$RsopXML)
       {
-        Get-GPResultantSetOfPolicy -Computer $ComputerName -ReportType Xml -Path $("$($Path)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
-        
+        Get-GPResultantSetOfPolicy -Computer $ComputerName -ReportType Xml -Path $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
+
         # import created XML document
-        [xml]$gpResultsXML = Get-Content $("$($Path)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
+        [xml]$gpResultsXML = Get-Content $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
       }
       else
       {
         # import in the already created RSOP XML document
         [xml]$gpResultsXML = Get-Content $RsopXML
       }
-	
+
       # Setup the XML namespace manager
       $xmlNameSpaceManager = New-Object System.Xml.XmlNamespaceManager $gpResultsXML.CreateNavigator().NameTable # Creating a new namespace manager object
       $xmlNameSpaceManager.AddNamespace('r', 'http://www.microsoft.com/GroupPolicy/Rsop') # This is the top level Namespace for RSOP XML Files
@@ -80,11 +80,11 @@
           $gpoGuidToNameTable += @{$($gpo.path.Identifier | Select-Object -ExpandProperty '#text') = $($gpo.name)} # Add New GUID Name Pair to the array
         }
       }
-	
+
       # Gather Extensions Required for Computer Results and user results
       $gpoSets = @('ComputerResults', 'UserResults')
       $extensionGroups = @()
-	
+
       foreach ($set in $gpoSets) # loop through each of the gpo sets to gather extensions
       {
         $Extensions = $gpResultsXML.SelectNodes("//r:$set/r:ExtensionData", $xmlNameSpaceManager) # use xml namespace to select all the extension nodes
@@ -103,10 +103,10 @@
       # Set Querys that have been configured / Accounted for
       $configuredQueries = @('SecurityOptions', 'Account', 'Audit', 'UserRightsAssignment', 'EventLog', 'RestrictedGroups', 'SystemServices', 'File', 'Registry')
 
-      # loop through each of the found groups 
+      # loop through each of the found groups
       foreach ($group in $extensionGroups)
       {
-	
+
         # Loop through each found extension for each group
         foreach ($extension in $group.Extensions)
         {
@@ -127,19 +127,16 @@
               $queryEntry.Name = $key # Name of the Query
               $queryEntry.Query = $extension.Extension | Get-Member -Type Property | Select-Object -ExpandProperty Name | Where-Object{ $extensionPropertiesFilter -notcontains $_ -and $_ -ne $key } # Set the Query(s)
               $queryResults += $queryEntry # Add to the results
-					
             }
           }
-			
         }
       }
 
       # Intialize the results varible
       $results = @()
-	
+
       foreach ($queries in $queryResults)
       {
-	
         # Loop through extensions querys
         foreach ($query in $queries.Query)
         {
@@ -152,14 +149,14 @@
             },@{
               Label = 'QueryName'; Expression = { $query }
             },@{
-              Label = 'Name'; Expression = { if ($_.Display.name -and $_.Display.name -ne '') 
+              Label = 'Name'; Expression = { if ($_.Display.name -and $_.Display.name -ne '')
                                          {
                                             [string]::Concat($_.Display.name)
                                          }
                                          Else
                                          {
                                             $concatArray = @() # Holds all the Values that we will be concat
-                                            if ($_.Path -and $_.Path -ne '') 
+                                            if ($_.Path -and $_.Path -ne '')
                                             {
                                               $concatArray += $_.Path
                                             }
@@ -177,7 +174,7 @@
                                                 $concatArray += $_.Name
                                               }
                                             }
-                                            
+
                                             [string]::Concat($concatArray)
                                          }
                                        }
@@ -188,8 +185,8 @@
                                             if ($_.Display.DisplayNumber -and $_.Display.DisplayNumber -ne '') {$concatArray += $_.Display.DisplayNumber}
                                             if ($_.Display.DisplayBoolean -and $_.Display.DisplayBoolean -ne '') {$concatArray += $_.Display.DisplayBoolean}
                                             if ($_.Display.DisplayString -and $_.Display.DisplayString -ne '') {$concatArray += $_.Display.DisplayString}
-                                            
-                                            if ($_.Display.DisplayStrings) 
+
+                                            if ($_.Display.DisplayStrings)
                                             {
                                               $concatArray += $($_.Display.DisplayStrings |
                                                               ForEach-Object -Begin { $output = @() } -Process { $output += $_.Value } -End { $([string]::join("`r`n", $output)) } )
@@ -208,7 +205,7 @@
                                             {
                                               $concatArray += $('Success:' + $_.SuccessAttempts)
                                             }
-                                            if ($_.FailureAttempts) 
+                                            if ($_.FailureAttempts)
                                             {
                                               $concatArray += $('Failure:' + $_.FailureAttempts)
                                             }
@@ -218,13 +215,13 @@
                                             }
                                             if ($_.SecurityDescriptor) # Need to have greater sample size to see if this can conatin more information
                                             {
-                                              if ($($_.SecurityDescriptor.PermissionsPresent | Select-Object -ExpandProperty '#text') -eq 'true')  
+                                              if ($($_.SecurityDescriptor.PermissionsPresent | Select-Object -ExpandProperty '#text') -eq 'true')
                                               {
                                                 $concatArray += $('PermissionsPresent:' + $($_.SecurityDescriptor.PermissionsPresent | Select-Object -ExpandProperty '#text')) # Label Permissions Present True
                                                 $concatArray += $($_.SecurityDescriptor.Permissions.TrusteePermissions |
                                                                   ForEach-Object -Begin { $output = @() } -Process { $output += $( if ($($_.Trustee.Name | Select-Object -ExpandProperty '#text') -eq '')
                                                                                                                      {
-                                                                                                                        if ($_.Standard.RegistryGroupedAccessEnum) 
+                                                                                                                        if ($_.Standard.RegistryGroupedAccessEnum)
                                                                                                                         {
                                                                                                                           $($_.Trustee.SID | Select-Object -ExpandProperty '#text') +':' + $($_.Type.PermissionType) + ':' + $($_.Standard.RegistryGroupedAccessEnum)
                                                                                                                         }
@@ -243,10 +240,10 @@
                                                                                                                          {
                                                                                                                             $($_.Trustee.Name | Select-Object -ExpandProperty '#text') + ':' + $($_.Type.PermissionType) + ':' + $($_.Standard.FileGroupedAccessEnum)
                                                                                                                          }
-                                                                                                                     } 
+                                                                                                                     }
                                                                                                                    ) } -End { $([string]::join("`r`n", $output)) })
                                               }
-                                              else 
+                                              else
                                               {
                                                 $concatArray += $('PermissionsPresent:' + $($_.SecurityDescriptor.PermissionsPresent | Select-Object -ExpandProperty '#text')) # Need to Check this if its set to true. My examples have it set to false
                                               }
@@ -259,7 +256,7 @@
                                                                                                                                         $($_.Trustee.SID | Select-Object -ExpandProperty '#text') + ':' + $_.Type.AuditType
                                                                                                                                      }
                                                                                                                                      else
-                                                                                                                                     { 
+                                                                                                                                     {
                                                                                                                                         $($_.Trustee.Name | Select-Object -ExpandProperty '#text') + ':' + $_.Type.AuditType
                                                                                                                                      }
                                                                                                                                     ) }  -End { ([string]::join("`r`n", $output)) })
@@ -285,14 +282,12 @@
                                                                                                                                                         $_.Name | Select-Object -ExpandProperty '#text'
                                                                                                                                                        }
                                                                                                                                                       ) } -End { $([string]::join("`r`n", $output)) } )}
-                            
                                             [string]::join("`r`n",$concatArray)
                                           }
                                         }
             } | Sort-Object Name
             $results += $queried
           }
-		
         }
       }
 
@@ -301,7 +296,6 @@
         # Output the results from the parser
         $results | Export-Csv -NoTypeInformation -Path $("$($output)\{0}_{1}_{2}.csv" -f $ComputerName, $nameOfReport, $dateOfReport)
       }
-      
       if ($PassThru)
       {
         # Return results of the RSOP Parse to memory
