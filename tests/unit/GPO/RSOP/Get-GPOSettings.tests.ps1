@@ -1,4 +1,9 @@
-﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+﻿<#
+  .Version
+    1.0.0.0
+#>
+
+$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 
 
@@ -8,6 +13,8 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 Describe "Get-GPOSettings PS: $PSVersion"{
   # Copy test data to TestDrive. The testData Varaible is created by the run tests script
   Copy-Item -Path "$Global:testData\GPO\RSOP\Sample_GPResultantSetOfPolicy_D2016-08-30T17.38.49.xml" -Destination 'TestDrive:\Sample_GPResultantSetOfPolicy_D2016-08-30T17.38.49.xml'
+
+  Set-Content $('TestDrive:\test.txt') -Value 'This is of no value'
 
   Context 'Strict Mode'{
     # Enable Strict Mode in Powershell
@@ -65,6 +72,14 @@ Describe "Get-GPOSettings PS: $PSVersion"{
       # Pull the Count for the number of objects expected for the Registry Query
       $Count = $((Get-GPOSettings -RsopXML 'TestDrive:\Sample_GPResultantSetOfPolicy_D2016-08-30T17.38.49.xml' -PassThru).QueryName | Where-Object {$_ -eq 'Registry'}).Count
       $Count | Should be 11
+    }
+
+    It 'should throw "No form of output selected"'{
+      {Get-GPOSettings -RsopXML 'TestDrive:\Sample_GPResultantSetOfPolicy_D2016-08-30T17.38.49.xml'} | Should throw 'No form of output selected'
+    }
+
+    It 'should throw "RSOP Could not be imported"'{
+      {$testResults = Get-GPOSettings -RsopXML 'TestDrive:\test.txt' -PassThru} | Should throw 'RSOP Could not be imported'
     }
 
   }
