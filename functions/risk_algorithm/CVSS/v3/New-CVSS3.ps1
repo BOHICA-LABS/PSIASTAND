@@ -13,6 +13,8 @@
 .VERSION
     1.0.0 (04.12.2016)
         -Intial Release
+    1.0.1 (08/31/2016)
+        -Removed Whitespace
 #>
 
 # Constants used in the formula
@@ -305,7 +307,7 @@ Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
   # CALCULATE THE CVSS TEMPORAL SCORE
 
   $temporalScore = $this.roundUp1($baseScore * $metricWeightE * $metricWeightRL * $metricWeightRC)
-  
+
   # CALCULATE THE CVSS ENVIRONMENTAL SCORE
   #
   # - envExploitabalitySubScore recalculates the Base Score Exploitability sub-score using any modified values from the
