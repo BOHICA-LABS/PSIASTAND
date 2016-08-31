@@ -1,4 +1,11 @@
-﻿## 1.0.1 (Feb, 18, 2016)
+﻿## 1.1.0.0 (Aug, 31, 2016)
+    - Created the RSOP XML Parser
+    - Created the CKLv2 Writer
+    - Updated to a 4 number versioning system
+    - MISC Stability Bug Fixes
+
+
+## 1.0.1 (Feb, 18, 2016)
     - Implemented excel unit tests
     - Implemented SQL unit tests
     - Implemented Import-XML function and tests
