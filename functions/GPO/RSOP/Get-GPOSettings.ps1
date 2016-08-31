@@ -31,8 +31,11 @@
       Additional information about the function.
 
       .VERSION
-      1.0.0.0 (0829.2016)
+      1.0.0.0 (08.29.2016)
         - Intial Release
+      1.0.1.0 (08.31.2016)
+        - Corrected Speeling in the example
+        - Added Limited error checking
   #>
 
   [CmdletBinding()]
@@ -45,6 +48,11 @@
   )
 
 
+      if (!$output -and !$PassThru)
+      {
+        Throw 'No form of output selected'
+      }
+
       # Formating Varibles
       $nameOfReport = 'GPResultantSetOfPolicy' # Set Name of Report
       $dateOfReport = $(Get-Date -Format '\Dyyyy-MM-dd\THH.mm.ss') # Format date Example: D2016-08-23T14.34.13 (D stands for Date and T stands for Time (Usefull for parsing file name))
@@ -52,15 +60,28 @@
       # Get the resulting set of policy for the current system if $RsopXML is not defined
       if (!$RsopXML)
       {
-        Get-GPResultantSetOfPolicy -Computer $ComputerName -ReportType Xml -Path $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
-
+        Try
+        {
+          Get-GPResultantSetOfPolicy -Computer $ComputerName -ReportType Xml -Path $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
+        }
+        Catch
+        {
+          Throw 'Failed creating RSOP. Is the AD Module installed?'
+        }
         # import created XML document
         [xml]$gpResultsXML = Get-Content $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
       }
       else
       {
-        # import in the already created RSOP XML document
-        [xml]$gpResultsXML = Get-Content $RsopXML
+        Try
+        {
+          # import in the already created RSOP XML document
+          [xml]$gpResultsXML = Get-Content $RsopXML
+        }
+        Catch
+        {
+          Throw 'RSOP Could not be imported'
+        }
       }
 
       # Setup the XML namespace manager
