@@ -6,8 +6,8 @@ $moduleName = 'PSIASTAND'
 $PSVersion = $PSVersionTable.PSVersion.Major
 
 Describe "Get-GPOSettings PS: $PSVersion"{
-  # Copy test data to TestDrive
-  Copy-Item -Path "$Global:testData\Trackers\Sample04_Win2008R2MS.csv" -Destination 'TestDrive:\Sample_GPResultantSetOfPolicy_D2016-08-30T17.38.49.xml'
+  # Copy test data to TestDrive. The testData Varaible is created by the run tests script
+  Copy-Item -Path "$Global:testData\GPO\RSOP\Sample_GPResultantSetOfPolicy_D2016-08-30T17.38.49.xml" -Destination 'TestDrive:\Sample_GPResultantSetOfPolicy_D2016-08-30T17.38.49.xml'
 
   Context 'Strict Mode'{
     # Enable Strict Mode in Powershell

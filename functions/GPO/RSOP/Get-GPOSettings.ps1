@@ -52,10 +52,10 @@
       # Get the resulting set of policy for the current system if $RsopXML is not defined
       if (!$RsopXML)
       {
-        Get-GPResultantSetOfPolicy -Computer $ComputerName -ReportType Xml -Path $("$($Path)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
+        Get-GPResultantSetOfPolicy -Computer $ComputerName -ReportType Xml -Path $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
 
         # import created XML document
-        [xml]$gpResultsXML = Get-Content $("$($Path)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
+        [xml]$gpResultsXML = Get-Content $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
       }
       else
       {
