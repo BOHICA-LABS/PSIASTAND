@@ -31,6 +31,9 @@ Recursively find CKL and Nessus files
 .VERSION
 1.0.0 (02.10.2016)
     -Intial Release
+1.0.0.1 (08.31.2016)
+    -Corrected issue when xlsx was not specified the script would output
+    a csv that did not contain the correct data.
 
 #>
 
@@ -149,10 +152,10 @@ Recursively find CKL and Nessus files
         }
         else {
             if ($Private:compiledCKLReport) {
-                Export-Csv -Path "$($Output)\$($name)_CKL.csv" -InputObject $Private:compiledCKLReport
+                $Private:compiledCKLReport | Export-Csv -Path "$($Output)\$($name)_CKL.csv" -NoTypeInformation
             }
             if ($Private:compilednessusreport) {
-                Export-Csv -Path "$($Output)\$($name)_Nessus.csv" -InputObject $Private:compilednessusreport
+                $Private:compilednessusreport | Export-Csv -Path "$($Output)\$($name)_Nessus.csv"
             }
         }
     }
