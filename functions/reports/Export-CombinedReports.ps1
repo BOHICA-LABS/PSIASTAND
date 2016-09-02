@@ -37,71 +37,71 @@ Recursively find CKL and Nessus files
 
 #>
 
-    [CmdletBinding(DefaultparameterSetName="None")]
+    [CmdletBinding(DefaultparameterSetName='None')]
     Param(
-        [Parameter(Mandatory=$false,Position=0,HelpMessage="You must provide the folder path to the CKL files to process")]
+        [Parameter(Mandatory=$false,Position=0,HelpMessage='You must provide the folder path to the CKL files to process')]
         [Alias('Folder', 'location', 'CKL')]
-        [string]$CKLFILES,
+        [string]$CKLFILES = $null,
 
-        [Parameter(Mandatory=$false,Position=1,HelpMessage="You must provide the location of the .nessus files to process")]
-        [ValidateNotNull()]
+        [Parameter(Mandatory=$false,Position=1,HelpMessage='You must provide the location of the .nessus files to process')]
+        #[ValidateNotNull()]
         [Alias('A', 'SCAN','ACAS')]
-        [string]$NESSUS,
+        [string]$NESSUS = $null,
 
-        [Parameter(Mandatory=$false,Position=2,HelpMessage="You must provide the folder path to be used for the output. If the location provided does not exsist it will be created")]
+        [Parameter(Mandatory=$false,Position=2,HelpMessage='You must provide the folder path to be used for the output. If the location provided does not exsist it will be created')]
         [ValidateNotNull()]
         [Alias('OUT', 'outlocation', 'O')]
-        [string]$Output = $(Throw "No output path given"),
+        [string]$Output = $(Throw 'No output path given'),
 
-        [Parameter(Mandatory=$false,Position=3,HelpMessage="You must provide a name for the report that will be created.")]
+        [Parameter(Mandatory=$false,Position=3,HelpMessage='You must provide a name for the report that will be created.')]
         [ValidateNotNull()]
         [Alias('Report','N')]
         [string]$name,
 
-        [Parameter(Mandatory=$false,Position=4,HelpMessage="Switch to designate output in excel. defualts to csv")]
+        [Parameter(Mandatory=$false,Position=4,HelpMessage='Switch to designate output in excel. defualts to csv')]
         [switch]$xlsx,
 
-        [Parameter(Mandatory=$false,Position=5,HelpMessage="Switch for recursive look for files")]
+        [Parameter(Mandatory=$false,Position=5,HelpMessage='Switch for recursive look for files')]
         [Alias('R')]
         [switch]$Recursive
     )
 
     BEGIN {
         if (!$CKLFILES -and !$NESSUS) { # Check to see if ckl or nessus paths where defined. if neither are defined throw an error
-            Throw "No paths defined"
+            Throw 'No paths defined'
         }
 
         if ($CKLFILES) { # Check for CKL file(s) path
             if ((Test-Path -Path $CKLFILES)) { # Check path
                 if ($Recursive) { # check for recursion
-                    $Private:cfiles = Get-ChildItem -Path $CKLFILES -Filter "*.ckl" -Recurse
+                    $Private:cfiles = Get-ChildItem -Path $CKLFILES -Filter '*.ckl' -Recurse
                 }
                 else {
-                    $Private:cfiles = Get-ChildItem -Path $CKLFILES -Filter "*.ckl"
+                    $Private:cfiles = Get-ChildItem -Path $CKLFILES -Filter '*.ckl'
                 }
                 if (!$Private:cfiles) { # check to see if files are returned
-                    Throw "No CKL Files Found"
+                    Throw 'No CKL Files Found'
                 }
             }
             else { # path does not exist
-                Throw "CKL path does not exist"
+                Throw 'CKL path does not exist'
             }
         }
 
         if ($NESSUS) { # Check for Nessus file(s) path
             if ((Test-Path -Path $NESSUS)) { # Check path
                 if ($Recursive) { # check for recursion
-                    $Private:nessusfiles = Get-ChildItem -Path $NESSUS -Filter "*.nessus" -Recurse
+                    $Private:nessusfiles = Get-ChildItem -Path $NESSUS -Filter '*.nessus' -Recurse
                 }
                 else {
-                    $Private:nessusfiles = Get-ChildItem -Path $NESSUS -Filter "*.nessus"
+                    $Private:nessusfiles = Get-ChildItem -Path $NESSUS -Filter '*.nessus'
                 }
                 if (!$Private:nessusfiles) { # check to see if files are returned
-                    Throw "No Nessus Files Found"
+                    Throw 'No Nessus Files Found'
                 }
             }
             else { # path does not exist
-                Throw "NESSUS path does not exist"
+                Throw 'NESSUS path does not exist'
             }
         }
     }
