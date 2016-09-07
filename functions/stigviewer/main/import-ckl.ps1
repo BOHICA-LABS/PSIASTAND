@@ -13,6 +13,8 @@ The file to look for
 .VERSION
 1.0.0 (01.23.2016)
     -Intial Release
+1.0.0.1 (09.07.2016)
+    -Bug fix Fix_Text and IA_Controls were not populating data.
 #>
     [CmdletBinding(DefaultparameterSetName="None")]
     Param (
@@ -114,9 +116,9 @@ The file to look for
                 $Private:entry.Rule_Ver = $($Private:vuln.STIG_DATA | Where-Object {$_.VULN_ATTRIBUTE -eq "Rule_Ver"}).ATTRIBUTE_DATA
                 $Private:entry.Rule_Title = $($Private:vuln.STIG_DATA | Where-Object {$_.VULN_ATTRIBUTE -eq "Rule_Title"}).ATTRIBUTE_DATA
                 $Private:entry.Vuln_Discuss = $($Private:vuln.STIG_DATA | Where-Object {$_.VULN_ATTRIBUTE -eq "Vuln_Discuss"}).ATTRIBUTE_DATA
-                $Private:entry.IA_Controls = $($Private:vuln.STIG_DATA.STIG_DATA | Where-Object {$_.VULN_ATTRIBUTE -eq "IA_Controls"}).ATTRIBUTE_DATA
+                $Private:entry.IA_Controls = $($Private:vuln.STIG_DATA | Where-Object {$_.VULN_ATTRIBUTE -eq "IA_Controls"}).ATTRIBUTE_DATA
                 $Private:entry.Check_Content = $($Private:vuln.STIG_DATA | Where-Object {$_.VULN_ATTRIBUTE -eq "Check_Content"}).ATTRIBUTE_DATA
-                $Private:entry.Fix_Text = $($Private:vuln.STIG_DATA.STIG_DATA | Where-Object {$_.VULN_ATTRIBUTE -eq "Fix_Text"}).ATTRIBUTE_DATA
+                $Private:entry.Fix_Text = $($Private:vuln.STIG_DATA | Where-Object {$_.VULN_ATTRIBUTE -eq "Fix_Text"}).ATTRIBUTE_DATA
                 $Private:entry.False_Positives = $($Private:vuln.STIG_DATA | Where-Object {$_.VULN_ATTRIBUTE -eq "False_Positives"}).ATTRIBUTE_DATA
                 $Private:entry.False_Negatives = $($Private:vuln.STIG_DATA | Where-Object {$_.VULN_ATTRIBUTE -eq "False_Negatives"}).ATTRIBUTE_DATA
                 $Private:entry.Documentable = $($Private:vuln.STIG_DATA | Where-Object {$_.VULN_ATTRIBUTE -eq "Documentable"}).ATTRIBUTE_DATA
