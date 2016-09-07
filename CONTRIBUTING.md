@@ -31,7 +31,7 @@ The type is contained within the title and can be one of these types:
 
 * feat: a new feature
 * fix: a bug fix
-* wip: work in progress. fomat for use is: wip: <type>: <description> This type is used
+* wip: work in progress. fomat for use is: wip: `<type>: <description>` This type is used
   when you need to make a commit but are not at a logical point but want/need to 
   create a save point. This type will be ignored during change log creation. your
   final commit should be the <type> of change you where making
