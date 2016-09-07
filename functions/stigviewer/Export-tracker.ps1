@@ -34,7 +34,7 @@ This function exports a ckl object to a csv tracker  file
         $rowoutput = "" | Select-Object Vuln_Num, Severity, Status, Notes, Validator, Date, Check_Content, Group_Title, Rule_ID, stigid, Rule_Title, Vuln_Discuss, IA_Controls, Fix_Text, False_Positives, False_Negatives,
             Documentable, Mitigations, Potential_Impact, Third_Party_Tools, Mitigation_Control, Responsibility, Security_Override_Guidance, Check_Content_Ref, Class,
             STIGRef, ASSET_TYPE, HOST_NAME, HOST_IP, HOST_MAC, HOST_GUID, HOST_FQDN, TECH_AREA, TARGET_KEY, version, classification, description, filename, releaseinfo, title, uuid, notice, source, Rule_Ver,
-            TargetKey, CCI_REF, Finding_Details, Comments, Severity_Override, Severity_Justification, StigViewer_Version   
+            TargetKey, CCI_REF, Finding_Details, Comments, Severity_Override, Severity_Justification, StigViewer_Version
         $rowoutput.ASSET_TYPE = $row.ASSET_TYPE
         $rowoutput.HOST_NAME = $row.HOST_NAME
         $rowoutput.HOST_IP = $row.HOST_IP
@@ -95,4 +95,4 @@ This function exports a ckl object to a csv tracker  file
 #$file = Get-item .\tests\data\CKL\CKLv2\sampleV2.ckl
 #$xml = import-xml -fileobj $file
 #$ckl = import-ckl -doc $xml
-#Export-Tracker -object $ckl -version 2 -exportlocation .\test.csv
+Export-Tracker -object $ckl -version 2 -exportlocation .\test.csv
