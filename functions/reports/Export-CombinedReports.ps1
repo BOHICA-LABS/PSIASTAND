@@ -34,6 +34,9 @@ Recursively find CKL and Nessus files
 1.0.0.1 (08.31.2016)
     -Corrected issue when xlsx was not specified the script would output
     a csv that did not contain the correct data.
+1.0.1.0 (09.02.2016)
+    -Corrected an issue that the Nessus scan paramter was required for the function
+      to be called when it should not have been.
 
 #>
 
@@ -44,7 +47,6 @@ Recursively find CKL and Nessus files
         [string]$CKLFILES = $null,
 
         [Parameter(Mandatory=$false,Position=1,HelpMessage='You must provide the location of the .nessus files to process')]
-        #[ValidateNotNull()]
         [Alias('A', 'SCAN','ACAS')]
         [string]$NESSUS = $null,
 
