@@ -1,0 +1,13 @@
+﻿# Verion
+#   1.0.0.0 (09.06.2016)
+#     - Intial Released
+
+
+
+# Exclude PowerShell Studio Project Files
+*.psproj
+*.psbuild
+*.psprojs
+
+# Remove Staging Folder
+Staging/
