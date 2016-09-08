@@ -30,7 +30,7 @@ $licenseTerm = 30
 $packageVersion = '1.0.1.0'
 $packageBy = 'Joshua Magady'
 $packageDate = '09/07/2016'
-$packageLicenseTo = 'SAIC'
+$packageLicenseTo = 'Will Holtorf - SAIC'
 $headerMessage = "RSOP Parser Version: {0} `r`nCreated By: Centurum IV&V Team `r`nPackage By: {1} `r`nPackaged Date: {2} `r`nLicensed to: {3} `r`n" -f $packageVersion, $packageBy, $packageDate, $packageLicenseTo
 
 Write-Host $headerMessage -f Green
@@ -45,6 +45,12 @@ if ($(Get-Date) -gt $(Get-Date $packageDate).AddDays($licenseTerm))
 {
 	Write-Host "[!] Your license has expired. Please contact $($packageBy) `
 on the IV&V team to see if you are eligable for an updated license `r`n" -f Red
+	
+	$scriptRoot = [System.AppDomain]::CurrentDomain.BaseDirectory.TrimEnd('\')
+	if ($scriptRoot -eq $PSHOME.TrimEnd('\'))
+	{
+		$scriptRoot = $PSScriptRoot
+	}
 	
 	return
 }
