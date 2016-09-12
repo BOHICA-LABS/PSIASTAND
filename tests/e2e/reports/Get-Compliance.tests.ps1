@@ -7,12 +7,16 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 
 Describe "Get-Compliance PS: $PSVersion" {
 
-    Setup -Dir CKL
+    Setup -Dir CKLv1
+    Setup -Dir CKLv2
     Setup -Dir results
+    Setup -Dir results\CKLv1
+    Setup -Dir results\CKLv2
 
-    Copy-Item "$Global:testData\CKL\CKLv1\Sample04_Win2008R2MS.ckl" "TestDrive:\CKL\Sample04_Win2008R2MS.ckl"
-    Copy-Item "$Global:testData\CKL\CKLv1\Sample05_Win2008R2MS.ckl" "TestDrive:\CKL\Sample05_Win2008R2MS.ckl"
-    Copy-Item "$Global:testData\CKL\CKLv1\Sample.ckl" "TestDrive:\CKL\Sample.ckl"
+    Copy-Item "$Global:testData\CKL\CKLv1\Sample04_Win2008R2MS.ckl" "TestDrive:\CKLv1\Sample04_Win2008R2MS.ckl"
+    Copy-Item "$Global:testData\CKL\CKLv1\Sample05_Win2008R2MS.ckl" "TestDrive:\CKLv1\Sample05_Win2008R2MS.ckl"
+    Copy-Item "$Global:testData\CKL\CKLv1\Sample.ckl" "TestDrive:\CKLv1\Sample.ckl"
+    Copy-Item "$Global:testData\CKL\CKLv2\SampleV2.ckl" "TestDrive:\CKLv2\SampleV2.ckl"
 
     Context "Strict mode" {
 
@@ -30,9 +34,16 @@ Describe "Get-Compliance PS: $PSVersion" {
             {Get-Compliance -ckl "FAKE" -Output "FAKE"} | Should Throw "No Name provided"
         }
 
-        It "Should Create a Compliance Report" {
-            Get-Compliance -ckl "$($testDrive)\CKL" -output "$($testDrive)\results" -name "APP_OWNER"
-            $xlsx = Import-XLSX -path "$($testDrive)\results\APP_OWNER_STIG_Compliance_Report.xlsx"
+        It "Should Create a Compliance Report for CKLv1" {
+            Get-Compliance -ckl "$($testDrive)\CKLv1" -output "$($testDrive)\results\CKLv1" -name "APP_OWNER"
+            $xlsx = Import-XLSX -path "$($testDrive)\results\CKLv1\APP_OWNER_STIG_Compliance_Report.xlsx"
+            $headers = $($xlsx | Get-Member -MemberType NoteProperty).Name
+            $($headers -contains "STIG" -and $headers -contains "Systems" -and $headers -contains "System_Count" -and $headers -contains "High_Count_Finding" -and $headers -contains "MED_Count_Finding" -and $headers -contains "LOW_Count_Finding" -and $headers -contains "High_Total" -and $headers -contains "MED_Total" -and $headers -contains "LOW_Total" -and $headers -contains "Total_Checks" -and $headers -contains "Compliance_Percentage" -and $headers -contains "Compliant") | Should Be $true
+        }
+
+        It "Should Create a Compliance Report for CKLv2" {
+            Get-Compliance -ckl "$($testDrive)\CKLv2" -output "$($testDrive)\results\CKLv2" -name "APP_OWNER"
+            $xlsx = Import-XLSX -path "$($testDrive)\results\CKLv2\APP_OWNER_STIG_Compliance_Report.xlsx"
             $headers = $($xlsx | Get-Member -MemberType NoteProperty).Name
             $($headers -contains "STIG" -and $headers -contains "Systems" -and $headers -contains "System_Count" -and $headers -contains "High_Count_Finding" -and $headers -contains "MED_Count_Finding" -and $headers -contains "LOW_Count_Finding" -and $headers -contains "High_Total" -and $headers -contains "MED_Total" -and $headers -contains "LOW_Total" -and $headers -contains "Total_Checks" -and $headers -contains "Compliance_Percentage" -and $headers -contains "Compliant") | Should Be $true
         }
