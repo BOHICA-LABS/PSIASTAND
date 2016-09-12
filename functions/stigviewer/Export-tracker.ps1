@@ -95,4 +95,4 @@ This function exports a ckl object to a csv tracker  file
 #$file = Get-item .\tests\data\CKL\CKLv2\sampleV2.ckl
 #$xml = import-xml -fileobj $file
 #$ckl = import-ckl -doc $xml
-Export-Tracker -object $ckl -version 2 -exportlocation .\test.csv
+#Export-Tracker -object $ckl -version 2 -exportlocation .\test.csv
