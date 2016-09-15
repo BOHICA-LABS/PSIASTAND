@@ -151,16 +151,20 @@ if (!$RsopXML)
 	Try
 	{
 		Write-Host "[+] Running RSOP Report" -f Green
-		Get-GPResultantSetOfPolicy -Computer $ComputerName -ReportType Xml -Path $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
+		#Get-GPResultantSetOfPolicy -Computer $ComputerName -ReportType Xml -Path $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
+		$rsopCommand = "gpresult /s $($ComputerName) /x `"$("$($output)\$($ComputerName)_$($nameOfReport)_$($dateOfReport).xml")`""
+		#Write-Host $rsopCommand
+		iex "$rsopCommand"
+		
+		# import created XML document
+		Write-Host "[+] Importing RSOP Report: $($ComputerName)_$($nameOfReport)_$($dateOfReport).xml" -f Green
+		[xml]$gpResultsXML = Get-Content $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
 	}
 	Catch
 	{
-		Write-Host "[ERROR] Failed creating RSOP. Is the AD Module installed? `r`n" -f Red
+		Write-Host "[ERROR] Failed creating RSOP or importing the XML Report. Have you logged into the machine? Did you provoide the FQDN? `r`n" -f Red
 		return
 	}
-	# import created XML document
-	Write-Host "[+] Importing RSOP Report: $($ComputerName)_$($nameOfReport)_$($dateOfReport).xml" -f Green
-	[xml]$gpResultsXML = Get-Content $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
 }
 else
 {
@@ -268,6 +272,8 @@ foreach ($queries in $queryResults)
 				Label = 'GroupName'; Expression = { $queries.GroupSet }
 			}, @{
 				Label = 'GPOName'; Expression = { $gpoGuidToNameTable."$($_.GPO.Identifier | Select-Object -ExpandProperty '#text')" }
+			}, @{
+				Label = 'SystemName'; Expression = { $ComputerName }
 			}, @{
 				Label = 'QueryName'; Expression = { $query }
 			}, @{
