@@ -132,6 +132,11 @@
       {
         foreach ($item in $foundEvent)
         {
+            if ($($item.SourceEventArgs.FullPath) -eq $("$($output)\$($name).csv")) # try and detect if a event was raised do to updating report file
+            {
+              continue
+            }
+            
             if ($(Get-Item $item.SourceEventArgs.FullPath -ErrorAction SilentlyContinue) -is [System.IO.DirectoryInfo])
             {
               $itemType = 'Folder'
