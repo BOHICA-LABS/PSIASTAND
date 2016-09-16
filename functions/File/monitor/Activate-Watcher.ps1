@@ -128,8 +128,22 @@
       {
         foreach ($item in $foundEvent)
         {
+            if ($(Get-Item $item.SourceEventArgs.FullPath -ErrorAction SilentlyContinue) -is [System.IO.DirectoryInfo])
+            {
+              $itemType = 'Folder'
+            }
+            elseif ($(Get-Item $item.SourceEventArgs.FullPath -ErrorAction SilentlyContinue) -is [System.IO.FileInfo])
+            {
+              $itemType = 'File'
+            }
+            else
+            {
+              $itemType = 'Unknown'
+            }
+          
           $entry = New-Object System.Object|
           Add-Member NoteProperty FilePath $($item.SourceEventArgs.FullPath) -PassThru |
+          Add-Member NoteProperty Type $itemType -PassThru|
           Add-Member NoteProperty ChangeType $($item.SourceEventArgs.ChangeType.ToString()) -PassThru |
           Add-Member NoteProperty Date $($item.TimeGenerated) -PassThru
           switch ($entry.ChangeType)
