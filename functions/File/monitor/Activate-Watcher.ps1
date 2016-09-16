@@ -47,6 +47,10 @@
       Description
       -----------
       You can filter by using powershell pipelining.
+
+      .Version
+      1.0.0.0 (09.16.2016)
+        - Initial release
   #>
 
 
@@ -67,10 +71,12 @@
   try
   {
     # Try to unregister incase this session was used
-    Unregister-Event FileCreated -force
-    Unregister-Event FileDeleted -force
-    Unregister-Event FileChanged -force
-    Unregister-Event FileRenamed -force
+    # Added SilentlyContinue error action as if this fails, the events arent registered anyways
+    # SilentlyContinue hides the unneeded error messages
+    Unregister-Event FileCreated -force -ErrorAction SilentlyContinue
+    Unregister-Event FileDeleted -force -ErrorAction SilentlyContinue
+    Unregister-Event FileChanged -force -ErrorAction SilentlyContinue
+    Unregister-Event FileRenamed -force -ErrorAction SilentlyContinue
   
   }
   catch
@@ -191,7 +197,8 @@
           }
         }
       }
-    }      
+    }
+    # Some form of sleep should be set in here between while loop iterations.      
   }
  }
 
