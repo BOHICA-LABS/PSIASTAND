@@ -10,6 +10,9 @@
       .Parameter $location
       The directory to watch. Optional, default to current directory.
 
+      .Parameter $filter
+      Filter for only the files you are interested in.
+
       .Parameter $output
       the directory to create the log. Will append if log is currentlyt in the folder Parameter is optional
 
@@ -46,7 +49,8 @@
 
   # Define the paramters for the function
   param (
-    [string]$location = "",
+    [string]$location = $(Get-Location),
+    [string]$filter = '*.*',
     [string]$output,
     [string]$name,
     [switch]$includeSubdirectories = $true,
@@ -56,76 +60,110 @@
     [switch]$includeDeleted = $true
   )
   
+  try
+  {
+    # Try to unregister incase this session was used
+    Unregister-Event FileCreated -force
+    Unregister-Event FileDeleted -force
+    Unregister-Event FileChanged -force
+    Unregister-Event FileRenamed -force
+  
+  }
+  catch
+  {
+    # nothing to do here. This is expected
+  }
+  
+  
+  
   if ($output -and !$name -or $name -and !$output)
   {
     Throw "Cant create output if both name and output location are not defined"
     return
   }
   
-  
-  # Get the current location
-  if($location -eq ""){
-    $location = get-location
-  }
-	
   # Create the FileSystemWatcher
   $watcher = New-Object System.IO.FileSystemWatcher # FileSystemWatcher Object
   $watcher.Path = $location # Location to where we will looking for changes
   $watcher.IncludeSubdirectories = $includeSubdirectories # Look at all folders below the root folder (True or False)
   $watcher.EnableRaisingEvents = $true
-  $watcher.NotifyFilter = [System.IO.NotifyFilters]::LastWrite -bor [System.IO.NotifyFilters]::FileName -bor [System.IO.NotifyFilters]::DirectoryName -bor [System.IO.NotifyFilters]::LastAccess # Set the NotifyFilters
+  $watcher.NotifyFilter = [System.IO.NotifyFilters]::LastWrite -bor [System.IO.NotifyFilters]::FileName -bor [System.IO.NotifyFilters]::DirectoryName -bor [System.IO.NotifyFilters]::LastAccess  #-bor [System.IO.NotifyFilters]::CreationTime-bor [System.IO.NotifyFilters]::Security -bor [System.IO.NotifyFilters]::Attributes -bor [System.IO.NotifyFilters]::Size # Set the NotifyFilters
 	
-  # Build the conditions based on the types of changes we want to look for
-  $conditions = 0
-  if($includeChanged){
-    $conditions = [System.IO.WatcherChangeTypes]::Changed 
-  }
-
-  if($includeRenamed){
-    $conditions = $conditions -bOr [System.IO.WatcherChangeTypes]::Renamed
-  }
-
-  if($includeCreated){
-    $conditions = $conditions -bOr [System.IO.WatcherChangeTypes]::Created 
-  }
-
-  if($includeDeleted){
-    $conditions = $conditions -bOr [System.IO.WatcherChangeTypes]::Deleted
-  }
-	
-  while($TRUE){
-    $result = $watcher.WaitForChanged($conditions, 1000); # wait for changes
-    if($result.TimedOut){
-      continue;
+  # register events
+  if ($includeCreated) 
+  {
+    Register-ObjectEvent $watcher Created -SourceIdentifier FileCreated -Action {
+      return $Event
     }
-    $filepath = [System.IO.Path]::Combine($location, $result.Name) # Create the File Path
-    New-Object Object |
-          Add-Member NoteProperty Path $filepath -passThru | 
-          Add-Member NoteProperty Operation $result.ChangeType.ToString() -passThru | 
-          write-output # Write to console
-    if ($output) 
+  }
+  
+  if ($includeDeleted)
+  {
+    Register-ObjectEvent $watcher Deleted -SourceIdentifier FileDeleted -Action {
+      return $Event
+    }
+  }
+
+  if ($includeChanged)
+  {
+    Register-ObjectEvent $watcher Changed -SourceIdentifier FileChanged -Action {
+      return $Event
+    }
+  }
+  
+  if ($includeRenamed) 
+  {
+    Register-ObjectEvent $watcher Renamed -SourceIdentifier FileRenamed -Action {
+      return $Event
+    }
+  }
+  Clear-Host
+
+  while($TRUE)
+  {
+    foreach ($Job in  Get-Job | Where-Object {$_.HasMoreData}) # Loop through each of the registered Jobs
     {
-      # Create entry that will be flushed to CSV
-      ($entry = ""  | Select-Object FilePath, ChangeType, Date) 
-      $entry.FilePath =  $filepath
-      $entry.ChangeType = $result.ChangeType
-      $entry.Date = Get-Date # get current time information (Maybe not the most acurate for this...?)
-      if(![System.IO.File]::Exists("$($output)\$($name).csv")) # check if file already exist (.net way)
+      $foundEvent = Receive-Job $Job
+      if($foundEvent -ne $null)
       {
-        $entry | Export-Csv -Path "$($output)\$($name).csv" -NoTypeInformation # Create the intial export
-      }
-      else
-      {
-        try
+        foreach ($item in $foundEvent)
         {
-          $entry | Export-Csv -Path "$($output)\$($name).csv" -NoTypeInformation -Append # append to current report
+          $entry = New-Object System.Object|
+          Add-Member NoteProperty FilePath $($item.SourceEventArgs.FullPath) -PassThru |
+          Add-Member NoteProperty ChangeType $($item.SourceEventArgs.ChangeType.ToString()) -PassThru |
+          Add-Member NoteProperty Date $($item.TimeGenerated) -PassThru
+          switch ($entry.ChangeType)
+          {
+             'Created'{$color = 'Green'}
+             'Deleted'{$color = 'Red'}
+             'Renamed'{$color = 'White'}
+             'Changed'{$color = 'Magenta'}
+              default {$color = 'White'}
+          }
+          
+          write-host (($entry | Format-List | Out-String).trim() + "`n`r")  -f $color
+          if ($output)
+          {
+            # Create entry that will be flushed to CSV
+            if(![System.IO.File]::Exists("$($output)\$($name).csv")) # check if file already exist (.net way)
+            {
+              $entry | Export-Csv -Path "$($output)\$($name).csv" -NoTypeInformation # Create the intial export
+            }
+            else
+            {
+              try
+              {
+                $entry | Export-Csv -Path "$($output)\$($name).csv" -NoTypeInformation -Append # append to current report
+              }
+              catch
+              {
+                Write-Host 'Could not flush to CSV. Did you open the file?' -f Red
+              }
+            }
+          }
         }
-        catch
-        {
-           Write-Host 'Could not flush to CSV. Did you open the file?' -f Red
-        }
-        
       }
-    }
+    }      
   }
-}
+ }
+
