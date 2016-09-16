@@ -19,6 +19,9 @@
       .Parameter $name
       This is the name of the report to create
 
+      .Parameter $monmode
+      When enabled it writes detected changes to the console.
+
       .Parameter $includeSubdirectories
       .Parameter $includeChanged
       .Parameter $includeRenamed
@@ -53,6 +56,7 @@
     [string]$filter = '*.*',
     [string]$output,
     [string]$name,
+    [switch]$monmode,
     [switch]$includeSubdirectories = $true,
     [switch]$includeChanged = $true,
     [switch]$includeRenamed = $true,
@@ -155,7 +159,12 @@
               default {$color = 'White'}
           }
           
-          write-host (($entry | Format-List | Out-String).trim() + "`n`r")  -f $color
+          # if monmode (Monitor Mode) display monitoring on the screen.
+          if ($monmode)
+          {
+            write-host (($entry | Format-List | Out-String).trim() + "`n`r")  -f $color
+          }
+          
           if ($output)
           {
             # Create entry that will be flushed to CSV
