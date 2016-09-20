@@ -58,31 +58,36 @@
       $dateOfReport = $(Get-Date -Format '\Dyyyy-MM-dd\THH.mm.ss') # Format date Example: D2016-08-23T14.34.13 (D stands for Date and T stands for Time (Usefull for parsing file name))
 
       # Get the resulting set of policy for the current system if $RsopXML is not defined
-      if (!$RsopXML)
-      {
-        Try
-        {
-          Get-GPResultantSetOfPolicy -Computer $ComputerName -ReportType Xml -Path $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
-        }
-        Catch
-        {
-          Throw 'Failed creating RSOP. Is the AD Module installed?'
-        }
-        # import created XML document
-        [xml]$gpResultsXML = Get-Content $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
-      }
-      else
-      {
-        Try
-        {
-          # import in the already created RSOP XML document
-          [xml]$gpResultsXML = Get-Content $RsopXML
-        }
-        Catch
-        {
-          Throw 'RSOP Could not be imported'
-        }
-      }
+if (!$RsopXML)
+{
+	Try
+	{
+		#Get-GPResultantSetOfPolicy -Computer $ComputerName -ReportType Xml -Path $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
+		$rsopCommand = "gpresult /s $($ComputerName) /x `"$("$($output)\$($ComputerName)_$($nameOfReport)_$($dateOfReport).xml")`""
+		#Write-Host $rsopCommand
+		Invoke-Expression "$rsopCommand"
+		
+		# import created XML document
+		[xml]$gpResultsXML = Get-Content $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
+	}
+	Catch
+	{
+		Throw "[ERROR] Failed creating RSOP or importing the XML Report. Have you logged into the machine? Did you provoide the FQDN?"
+	}
+}
+else
+{
+	Try
+	{
+		# import in the already created RSOP XML document
+		[xml]$gpResultsXML = Get-Content $RsopXML
+	}
+	Catch
+	{
+		Throw "[ERROR] RSOP Could not be imported"
+	}
+}
+
 
       # Setup the XML namespace manager
       $xmlNameSpaceManager = New-Object System.Xml.XmlNamespaceManager $gpResultsXML.CreateNavigator().NameTable # Creating a new namespace manager object
