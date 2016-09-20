@@ -1,4 +1,4 @@
-﻿function Activate-Watcher{
+﻿function Start-Watcher{
   <#
       .Synopsis
       Continuously monitors a directory tree and write to the output the path of the file that has changed.
@@ -18,6 +18,12 @@
 
       .Parameter $name
       This is the name of the report to create
+
+      .Parameter $testmode
+      This is for testing. It will exit the while loop after the defined number of Secounds have passed
+
+      .Paramter $passthur
+      This will output the objects to the shell in theroy.
 
       .Parameter $monmode
       When enabled it writes detected changes to the console.
@@ -60,6 +66,8 @@
     [string]$filter = '*.*',
     [string]$output,
     [string]$name,
+    [int]$testmode,
+    [switch]$passthur,
     [switch]$monmode,
     [switch]$includeSubdirectories = $true,
     [switch]$includeChanged = $true,
@@ -92,6 +100,12 @@
     return
   }
   
+  if ($passthur -and $monmode)
+  {
+    Throw "Choose one type of mode."
+    return
+  }
+  
   # Create the FileSystemWatcher
   $watcher = New-Object System.IO.FileSystemWatcher # FileSystemWatcher Object
   $watcher.Path = $location # Location to where we will looking for changes
@@ -104,33 +118,45 @@
   {
     Register-ObjectEvent $watcher Created -SourceIdentifier FileCreated -Action {
       return $Event
-    }
+    } | Out-Null # suppress Console Output
   }
   
   if ($includeDeleted)
   {
     Register-ObjectEvent $watcher Deleted -SourceIdentifier FileDeleted -Action {
       return $Event
-    }
+    } | Out-Null # suppress Console Output
   }
 
   if ($includeChanged)
   {
     Register-ObjectEvent $watcher Changed -SourceIdentifier FileChanged -Action {
       return $Event
-    }
+    } | Out-Null # suppress Console Output
   }
   
   if ($includeRenamed) 
   {
     Register-ObjectEvent $watcher Renamed -SourceIdentifier FileRenamed -Action {
       return $Event
-    }
+    } | Out-Null # suppress Console Output
   }
-  Clear-Host
-
-  while($TRUE)
+  
+  <#
+  if (!$testmode) # only invoked if not used in testmode
   {
+     Clear-Host # wipe the screen
+  }
+  #>
+
+  if ($testmode) # used for testing. Set the forced exit time
+  {
+    $exitTime = (Get-Date).AddSeconds($testmode)
+  }
+
+  $monitoring = $true
+  while($monitoring)
+  { 
     foreach ($Job in  Get-Job | Where-Object {$_.HasMoreData}) # Loop through each of the registered Jobs
     {
       $foundEvent = Receive-Job $Job
@@ -138,24 +164,32 @@
       {
         foreach ($item in $foundEvent)
         {
+          
             if ($($item.SourceEventArgs.FullPath) -eq $("$($output)\$($name).csv")) # try and detect if a event was raised do to updating report file
             {
               continue
             }
-            
-            if ($(Get-Item $item.SourceEventArgs.FullPath -ErrorAction SilentlyContinue) -is [System.IO.DirectoryInfo])
+            try
             {
-              $itemType = 'Folder'
+              if ($(Get-Item $item.SourceEventArgs.FullPath -ErrorAction SilentlyContinue) -is [System.IO.DirectoryInfo])
+              {
+                $itemType = 'Folder'
+              }
+              elseif ($(Get-Item $item.SourceEventArgs.FullPath -ErrorAction SilentlyContinue) -is [System.IO.FileInfo])
+              {
+                $itemType = 'File'
+              }
+              else
+              {
+                $itemType = 'Unknown'
+              }
             }
-            elseif ($(Get-Item $item.SourceEventArgs.FullPath -ErrorAction SilentlyContinue) -is [System.IO.FileInfo])
-            {
-              $itemType = 'File'
-            }
-            else
+            catch
             {
               $itemType = 'Unknown'
             }
-          
+            
+
           $entry = New-Object System.Object|
           Add-Member NoteProperty FilePath $($item.SourceEventArgs.FullPath) -PassThru |
           Add-Member NoteProperty Type $itemType -PassThru|
@@ -174,6 +208,12 @@
           if ($monmode)
           {
             write-host (($entry | Format-List | Out-String).trim() + "`n`r")  -f $color
+          }
+          
+          # if passthur return object. This is really for testing or interfacing with another application
+          if ($passthur)
+          {
+            $entry
           }
           
           if ($output)
@@ -198,7 +238,15 @@
         }
       }
     }
-    # Some form of sleep should be set in here between while loop iterations.      
+    # Some form of sleep should be set in here between while loop iterations. 
+    
+    if ($testmode) # test Mode. Check if the time condition has been met, if so exit.
+    {
+      if ($(Get-Date) -ge $exitTime)
+      {
+        $monitoring = $false
+      }
+    }    
   }
  }
 
