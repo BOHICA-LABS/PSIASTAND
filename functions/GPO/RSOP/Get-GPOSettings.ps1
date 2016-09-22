@@ -66,7 +66,7 @@ if (!$RsopXML)
 		$rsopCommand = "gpresult /s $($ComputerName) /x `"$("$($output)\$($ComputerName)_$($nameOfReport)_$($dateOfReport).xml")`""
 		#Write-Host $rsopCommand
 		Invoke-Expression "$rsopCommand"
-		
+
 		# import created XML document
 		[xml]$gpResultsXML = Get-Content $("$($output)\{0}_{1}_{2}.xml" -f $ComputerName, $nameOfReport, $dateOfReport)
 	}
