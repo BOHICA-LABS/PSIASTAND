@@ -1,6 +1,38 @@
 function Get-ManHourEst
 {
-  #Content
+  <#
+    .SYNOPSIS
+    Get-ManHourEst produces serveral numuical values for the total amount of hours required to complete
+    a package, with a given set of STIGS, and Metrics provided.
+
+    .DESCRIPTION
+    Add a more complete description of what the function does.
+
+    .PARAMETER deviceMap
+    Describe parameter -deviceMap.
+
+    .PARAMETER loeMap
+    Describe parameter -loeMap.
+
+    .EXAMPLE
+    Get-ManHourEst -deviceMap Value -loeMap Value
+    Describe what this call does
+
+    .NOTES
+    Place additional notes here.
+
+    .LINK
+    URLs to related sites
+    The first link is opened by Get-Help -Online Get-ManHourEst
+
+    .INPUTS
+    List of input types that are accepted by this function.
+
+    .OUTPUTS
+    List of output types produced by this function.
+  #>
+
+
   
   param
   (
