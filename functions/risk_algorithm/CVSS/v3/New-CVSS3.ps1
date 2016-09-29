@@ -436,7 +436,7 @@
         if ($metricValues[$singleMetric[0]] -eq $null) {
           $metricValues[$singleMetric[0]] = $singleMetric[1]
         } else {
-          $badMetrics.Add($singleMetric[0] | Out-Null);
+          $badMetrics.Add($singleMetric[0]) | Out-Null;
         }
       }
     }
