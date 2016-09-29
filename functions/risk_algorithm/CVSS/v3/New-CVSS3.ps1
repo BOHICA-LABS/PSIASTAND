@@ -19,6 +19,7 @@
         -Corrected Issue with CVSS 3 Calculator not populating Severity.
           This was due to the missplaced toString() converting int to strings.
           This caused the comparasion to fail.
+        -Corrected issue with $badMetrics piping add count to console
   #>
 
   # Constants used in the formula
