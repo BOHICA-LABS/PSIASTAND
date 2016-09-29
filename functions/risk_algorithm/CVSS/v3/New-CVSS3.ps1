@@ -171,17 +171,17 @@
     # We need values for all Base Score metrics to calculate scores.
     # If any Base Score parameters are undefined, create an array of missing metrics and return it with an error.
 
-    if ($AttackVector -eq $null -or $AttackVector -eq "") {$badMetrics.Add("AV")}
-    if ($AttackComplexity -eq $null -or $AttackComplexity -eq "") {$badMetrics.Add("AC")}
-    if ($PrivilegesRequired -eq $null -or $PrivilegesRequired -eq "") {$badMetrics.Add("PR")}
-    if ($UserInteraction -eq $null -or $UserInteraction -eq "") {$badMetrics.Add("UI")}
-    if ($Scope -eq $null -or $Scope -eq "") {$badMetrics.Add("S")}
-    if ($Confidentiality -eq $null -or $Confidentiality -eq "") {$badMetrics.Add("C")}
-    if ($Integrity -eq $null -or $Integrity -eq "") {$badMetrics.Add("I")}
-    if ($Availability -eq $null -or $Availability -eq "") {$badMetrics.Add("A")}
+    if ($AttackVector -eq $null -or $AttackVector -eq "") {$badMetrics.Add("AV") | Out-Null}
+    if ($AttackComplexity -eq $null -or $AttackComplexity -eq "") {$badMetrics.Add("AC") | Out-Null}
+    if ($PrivilegesRequired -eq $null -or $PrivilegesRequired -eq "") {$badMetrics.Add("PR") | Out-Null}
+    if ($UserInteraction -eq $null -or $UserInteraction -eq "") {$badMetrics.Add("UI") | Out-Null}
+    if ($Scope -eq $null -or $Scope -eq "") {$badMetrics.Add("S") | Out-Null}
+    if ($Confidentiality -eq $null -or $Confidentiality -eq "") {$badMetrics.Add("C") | Out-Null}
+    if ($Integrity -eq $null -or $Integrity -eq "") {$badMetrics.Add("I") | Out-Null}
+    if ($Availability -eq $null -or $Availability -eq "") {$badMetrics.Add("A") | Out-Null}
 
     if ($badMetrics.Count -gt 0) {
-      return @{ Success = $false; errorType = "MissingBaseMetric"; errorMetrics = $badMetrics; }
+      return $(@{ Success = $false; errorType = "MissingBaseMetric"; errorMetrics = $badMetrics; })
     }
 
     # STORE THE METRIC VALUES THAT WERE PASSED AS PARAMETERS
@@ -226,30 +226,30 @@
     # with their Base metric equivalents later in the function. For example, an MAV of "X" will be replaced with the
     # value given for AV. We therefore need to explicitly allow a value of "X" for Environmental metrics.
 
-    if (!$this.Weight.AV.ContainsKey($AV))   { $badMetrics.Add("AV") }
-    if (!$this.Weight.AC.ContainsKey($AC))   { $badMetrics.Add("AC") }
-    if (!$this.Weight.PR.U.ContainsKey($PR)) { $badMetrics.Add("PR") }
-    if (!$this.Weight.UI.ContainsKey($UI))   { $badMetrics.Add("UI") }
-    if (!$this.Weight.S.ContainsKey($S))     { $badMetrics.Add("S") }
-    if (!$this.Weight.CIA.ContainsKey($C))   { $badMetrics.Add("C") }
-    if (!$this.Weight.CIA.ContainsKey($I))   { $badMetrics.Add("I") }
-    if (!$this.Weight.CIA.ContainsKey($A))   { $badMetrics.Add("A") }
+    if (!$this.Weight.AV.ContainsKey($AV))   { $badMetrics.Add("AV") | Out-Null }
+    if (!$this.Weight.AC.ContainsKey($AC))   { $badMetrics.Add("AC") | Out-Null }
+    if (!$this.Weight.PR.U.ContainsKey($PR)) { $badMetrics.Add("PR") | Out-Null }
+    if (!$this.Weight.UI.ContainsKey($UI))   { $badMetrics.Add("UI") | Out-Null }
+    if (!$this.Weight.S.ContainsKey($S))     { $badMetrics.Add("S") | Out-Null }
+    if (!$this.Weight.CIA.ContainsKey($C))   { $badMetrics.Add("C") | Out-Null }
+    if (!$this.Weight.CIA.ContainsKey($I))   { $badMetrics.Add("I") | Out-Null }
+    if (!$this.Weight.CIA.ContainsKey($A))   { $badMetrics.Add("A") | Out-Null }
 
-    if (!$this.Weight.E.ContainsKey($E))     { $badMetrics.Add("E") }
-    if (!$this.Weight.RL.ContainsKey($RL))   { $badMetrics.Add("RL") }
-    if (!$this.Weight.RC.ContainsKey($RC))   { $badMetrics.Add("RC") }
+    if (!$this.Weight.E.ContainsKey($E))     { $badMetrics.Add("E") | Out-Null }
+    if (!$this.Weight.RL.ContainsKey($RL))   { $badMetrics.Add("RL") | Out-Null } 
+    if (!$this.Weight.RC.ContainsKey($RC))   { $badMetrics.Add("RC") | Out-Null }
 
-    if (!($CR  -eq "X" -or $this.Weight.CIAR.ContainsKey($CR)))  { $badMetrics.Add("CR") }
-    if (!($IR  -eq "X" -or $this.Weight.CIAR.ContainsKey($IR)))  { $badMetrics.Add("IR") }
-    if (!($AR  -eq "X" -or $this.Weight.CIAR.ContainsKey($AR)))  { $badMetrics.Add("AR") }
-    if (!($MAV -eq "X" -or $this.Weight.AV.ContainsKey($MAV)))   { $badMetrics.Add("MAV") }
-    if (!($MAC -eq "X" -or $this.Weight.AC.ContainsKey($MAC)))   { $badMetrics.Add("MAC") }
-    if (!($MPR -eq "X" -or $this.Weight.PR.U.ContainsKey($MPR))) { $badMetrics.Add("MPR") }
-    if (!($MUI -eq "X" -or $this.Weight.UI.ContainsKey($MUI)))   { $badMetrics.Add("MUI") }
-    if (!($MS  -eq "X" -or $this.Weight.S.ContainsKey($MS)))     { $badMetrics.Add("MS") }
-    if (!($MC  -eq "X" -or $this.Weight.CIA.ContainsKey($MC)))   { $badMetrics.Add("MC") }
-    if (!($MI  -eq "X" -or $this.Weight.CIA.ContainsKey($MI)))   { $badMetrics.Add("MI") }
-    if (!($MA  -eq "X" -or $this.Weight.CIA.ContainsKey($MA)))   { $badMetrics.Add("MA") }
+    if (!($CR  -eq "X" -or $this.Weight.CIAR.ContainsKey($CR)))  { $badMetrics.Add("CR") | Out-Null }
+    if (!($IR  -eq "X" -or $this.Weight.CIAR.ContainsKey($IR)))  { $badMetrics.Add("IR") | Out-Null }
+    if (!($AR  -eq "X" -or $this.Weight.CIAR.ContainsKey($AR)))  { $badMetrics.Add("AR") | Out-Null }
+    if (!($MAV -eq "X" -or $this.Weight.AV.ContainsKey($MAV)))   { $badMetrics.Add("MAV") | Out-Null }
+    if (!($MAC -eq "X" -or $this.Weight.AC.ContainsKey($MAC)))   { $badMetrics.Add("MAC") | Out-Null }
+    if (!($MPR -eq "X" -or $this.Weight.PR.U.ContainsKey($MPR))) { $badMetrics.Add("MPR") | Out-Null }
+    if (!($MUI -eq "X" -or $this.Weight.UI.ContainsKey($MUI)))   { $badMetrics.Add("MUI") | Out-Null }
+    if (!($MS  -eq "X" -or $this.Weight.S.ContainsKey($MS)))     { $badMetrics.Add("MS") | Out-Null }
+    if (!($MC  -eq "X" -or $this.Weight.CIA.ContainsKey($MC)))   { $badMetrics.Add("MC") | Out-Null }
+    if (!($MI  -eq "X" -or $this.Weight.CIA.ContainsKey($MI)))   { $badMetrics.Add("MI") | Out-Null }
+    if (!($MA  -eq "X" -or $this.Weight.CIA.ContainsKey($MA)))   { $badMetrics.Add("MA") | Out-Null }
 
     if ($badMetrics.Count > 0) {
       return @{ Success = $false; errorType = "UnknownMetricValue"; errorMtrics = $badMetrics}
@@ -435,7 +435,7 @@
         if ($metricValues[$singleMetric[0]] -eq $null) {
           $metricValues[$singleMetric[0]] = $singleMetric[1]
         } else {
-          $badMetrics.Add($singleMetric[0]);
+          $badMetrics.Add($singleMetric[0] | Out-Null);
         }
       }
     }
@@ -460,5 +460,6 @@
   return $CVSS
 }
 
-#$CVSS = New-CVSS3
+$CVSS = New-CVSS3
 #$CVSS.calculateCVSSFromVector("CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H")
+$CVSS.calculateCVSSFromMetrics()

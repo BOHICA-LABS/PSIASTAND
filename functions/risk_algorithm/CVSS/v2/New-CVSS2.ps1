@@ -374,3 +374,6 @@
   #return $object
   return $CVSS
 }
+
+$CVSS = New-CVSS2
+#$CVSS.calculateCVSSFromVector("CVSS:2.0/AV:N/AC:L/AU:N/C:N/I:N/A:C")
