@@ -461,6 +461,6 @@
   return $CVSS
 }
 
-$CVSS = New-CVSS3
-$CVSS.calculateCVSSFromVector("CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H")
+#$CVSS = New-CVSS3
+#$CVSS.calculateCVSSFromVector("CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H")
 #$CVSS.calculateCVSSFromMetrics()
