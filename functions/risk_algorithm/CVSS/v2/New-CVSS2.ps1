@@ -23,6 +23,9 @@
 
       .OUTPUTS
       List of output types produced by this function.
+
+      .NOTES
+      5.5 should be okay for risk. reassesss this at a later date
   #>
 
   # Constants used in the formula
@@ -270,7 +273,8 @@
     
     # CALCULATE THE CVSS ENVIRONMENTAL SCORE
     $adjustedImpact = [Math]::Min(10.41*(1 - ((1 - $metricWeightC*$metricWeightCR)*(1 - $metricWeightI*$metricWeightIR)*(1 - $metricWeightA*$metricWeightAR))),10)
-    $adjustedTemporal = $this.roundUp1(((0.6*$adjustedImpact) + (0.4*$exploitabalityScore) - 1.5) * $($this.fImpact($adjustedImpact)))
+    $adjustedBase = $this.roundUp1(((0.6*$adjustedImpact) + (0.4*$exploitabalityScore) - 1.5) * $($this.fImpact($adjustedImpact)))
+    $adjustedTemporal = $this.roundUp1($adjustedBase*$metricWeightE*$metricWeightRL*$metricWeightRC)
     $envScore = $this.roundUp1(($adjustedTemporal+(10 - $adjustedTemporal)*$metricWeightCDP) * $metricWeightTD)
     
     # CONSTRUCT THE VECTOR STRING
@@ -375,6 +379,6 @@
   return $CVSS
 }
 
-$CVSS = New-CVSS2
-$CVSS.calculateCVSSFromVector("CVSS:2.0/AV:N/AC:L/AU:N/C:N/I:N/A:C/E:F/RL:OF/RC:C/CDP:H/TD:H/CR:M/IR:M/AR:H")
+#$CVSSobj = New-CVSS2
+#$CVSSobj.calculateCVSSFromVector("CVSS:2.0/AV:N/AC:L/AU:N/C:N/I:N/A:C/E:F/RL:OF/RC:C/CDP:H/TD:H/CR:M/IR:M/AR:H")
 #$CVSS.calculateCVSSFromMetrics()

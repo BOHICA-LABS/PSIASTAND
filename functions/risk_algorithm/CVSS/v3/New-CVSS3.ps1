@@ -42,8 +42,8 @@
   $CVSS.Weight = @{
     AV =   @{ N = 0.85;  A = 0.62;  L = 0.55;  P = 0.2;};
     AC =   @{ H = 0.44;  L = 0.77;};
-    PR =   @{ U =       @{N = 0.85;  L = 0.62;  H = 0.27;};         # These values are used if Scope is Unchanged
-            C =       @{N = 0.85;  L = 0.68;  H = 0.5;};           # These values are used if Scope is Changed
+    PR =   @{ U = @{N = 0.85;  L = 0.62;  H = 0.27;};         # These values are used if Scope is Unchanged
+              C = @{N = 0.85;  L = 0.68;  H = 0.5;};           # These values are used if Scope is Changed
          };
     UI =   @{ N = 0.85;  R = 0.62;};
     S =    @{ U = 6.42;  C = 7.52;};                             # Note: not defined as constants in specification
@@ -332,7 +332,7 @@
 
     if ($MS -eq "U" -or ($MS -eq "X" -and $S -eq "U")) {
       $envModifiedImpactSubScore = $metricWeightMS * $envImpactSubScoreMultiplier
-      $envScore = $this.roundUp1($this.roundUp1([math]::Min($envModifiedImpactSubScore + $envModifiedExploitabalitySubScore), 10) * $metricWeightE * $metricWeightRL * $metricWeightRC)
+      $envScore = $this.roundUp1($this.roundUp1([math]::Min(($envModifiedImpactSubScore + $envModifiedExploitabalitySubScore), 10) * $metricWeightE * $metricWeightRL * $metricWeightRC))
     } else {
       $envModifiedImpactSubScore = $metricWeightMS * ($envImpactSubScoreMultiplier - 0.029) - 3.25 * [math]::Pow($envImpactSubScoreMultiplier - 0.02, 15)
       $envScore = $this.roundUp1($this.roundUp1([math]::Min($this.scopeCoefficient * ($envModifiedImpactSubScore + $envModifiedExploitabalitySubScore), 10)) * $metricWeightE * $metricWeightRL * $metricWeightRC)
@@ -462,5 +462,5 @@
 }
 
 $CVSS = New-CVSS3
-#$CVSS.calculateCVSSFromVector("CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H")
-$CVSS.calculateCVSSFromMetrics()
+$CVSS.calculateCVSSFromVector("CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H")
+#$CVSS.calculateCVSSFromMetrics()
