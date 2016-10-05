@@ -30,19 +30,19 @@
 
   # Constants used in the formula
   $CVSS = @{} # initialize HashTable
-  
+
   $CVSS.CVSSVersionIdentifier = "CVSS:2.0"
   $CVSS.exploitabilityCoefficient = 20
 
   # A regular expression to validate that a CVSS 3.0 vector string is well formed. It checks metrics and metric
   # values. It does not check that a metric is specified more than once and it does not check that all base
   # metrics are present. These checks need to be performed separately.
-  
+
   $CVSS.vectorStringRegex_20 = New-Object System.Text.RegularExpressions.Regex '^CVSS:2\.0\/((AV:[LAN]|AC:[HML]|AU:[MSN]|C:[NPC]|I:[NPC]|A:[NPC]|E:([UFH]|POC|ND)|RL:([WU]|OF|TF|ND)|RC:([C]|UC|UR|ND)|CDP:([NLH]|LM|MH|ND)|TD:([NLMH]|ND)|CR:([LMH]|ND)|IR:([LMH]|ND)|AR:([LMH]|ND))\/)*(AV:[LAN]|AC:[HML]|AU:[MSN]|C:[NPC]|I:[NPC]|A:[NPC]|E:([UFH]|POC|ND)|RL:([WU]|OF|TF|ND)|RC:([C]|UC|UR|ND)|CDP:([NLH]|LM|MH|ND)|TD:([NLMH]|ND)|CR:([LMH]|ND)|IR:([LMH]|ND)|AR:([LMH]|ND))$', 'IgnoreCase'
-  
+
   # Associative arrays mapping each metric value to the constant defined in the CVSS scoring formula in the CVSS v2.0
   # specification.
-  
+
   $CVSS.Weight = @{
     AV = @{ L = 0.395; A = 0.646; N = 1.0; };
     AC = @{ H = 0.35; M = 0.61; L = 0.71; };
@@ -52,13 +52,13 @@
     E = @{ U = 0.85; POC = 0.9; F = 0.95; H = 1.00; ND = 1.00; };
     RL = @{ OF = 0.87; TF = 0.90; W = 0.95; ND = 1.00; };
     RC = @{ UC = 0.90; UR = 0.95; C = 1.00; ND = 1.00; };
-    
+
     CDP = @{ N = 0; L = 0.1; LM = 0.3; MH = 0.4; H = 0.5; ND = 0; };
     TD = @{ N = 0; L = 0.25; M = 0.75; H = 1.00; ND = 1.00; };
-    
+
     CIAR = @{ L = 0.5; M = 1.0; H = 1.51; ND = 1.0; }; # CR, IR and AR have the same weights
   }
-  
+
   # Severity rating bands, as defined in the CVSS v3.0 specification.
   $CVSS.severityRatings  = @(
     @{ name = "None";     bottom = 0.0; top =  0.0;},
@@ -67,7 +67,7 @@
     @{ name = "High";     bottom = 7.0; top =  8.9;},
     @{ name = "Critical"; bottom = 9.0; top = 10.0;}
   )
-  
+
   <#  ** CVSS.severityRating **
       *
       * Given a CVSS score, returns the name of the severity rating as defined in the CVSS standard.
@@ -96,7 +96,7 @@
 
     return $null
   }
-  
+
   <#  ** CVSS.roundUp1 **
       *
       * Rounds up the number passed as a parameter to 1 decimal place and returns the result.
@@ -108,7 +108,7 @@
     Param($d)
     return [math]::Round($d * 10) / 10
   }
-  
+
   <#  ** CVSS.fImpact **
       *
       * Checks to see if the provided impact score is 0
@@ -116,7 +116,7 @@
   #>
   Add-Member -InputObject $CVSS ScriptMethod fImpact {
     Param($impact)
-    
+
     if ($impact -eq 0)
     {
       return 0
@@ -126,7 +126,7 @@
       return 1.176
     }
   }
-  
+
   <#  ** CVSS.calculateCVSSFromMetrics **
       *
       * Takes Base, Temporal and Environmental metric values as individual parameters. Their values are in the short format
@@ -171,10 +171,10 @@
       $IntegrityRequirement,
       $AvailabilityRequirement
     )
-    
+
     # If input validation fails, this array is populated with strings indicating which metrics failed validation.
     [System.Collections.ArrayList]$badMetrics = @()
-    
+
     # ENSURE ALL BASE METRICS ARE DEFINED
     #
     # We need values for all Base Score metrics to calculate scores.
@@ -185,11 +185,11 @@
     if ($Confidentiality -eq $null -or $Confidentiality -eq "") {$badMetrics.Add("C") | Out-Null}
     if ($Integrity -eq $null -or $Integrity -eq "") {$badMetrics.Add("I") | Out-Null}
     if ($Availability -eq $null -or $Availability -eq "") {$badMetrics.Add("A") | Out-Null}
-    
+
     if ($badMetrics.Count -gt 0) {
       return @{ Success = $false; errorType = "MissingBaseMetric"; errorMetrics = $badMetrics; }
     }
-    
+
     # STORE THE METRIC VALUES THAT WERE PASSED AS PARAMETERS
     #
     # Temporal and Environmental metrics are optional, so set them to "ND" ("Not Defined") if no value was passed.
@@ -200,19 +200,19 @@
     $C = $Confidentiality
     $I  = $Integrity
     $A  = $Availability
-    
+
     # Temporal
     $E =   if ($Exploitability){$Exploitability}else{"ND"}
     $RL =  if ($RemediationLevel){$RemediationLevel}else{"ND"}
     $RC =  if ($ReportConfidence){$ReportConfidence}else{"ND"}
-    
+
     # Environmental
     $CDP =  if ($CollateralDamagePotential){$CollateralDamagePotential}else{"ND"}
     $TD =  if ($TargetDistribution){$TargetDistribution}else{"ND"}
     $CR = if ($ConfidentialityRequirement){$ConfidentialityRequirement}else{"ND"}
     $IR = if ($IntegrityRequirement){$IntegrityRequirement}else{"ND"}
     $AR = if ($AvailabilityRequirement){$AvailabilityRequirement}else{"ND"}
-    
+
     # CHECK VALIDITY OF METRIC VALUES
     #
     # Use the Weight object to ensure that, for every metric, the metric value passed is valid.
@@ -236,11 +236,11 @@
     if (!($CR  -eq "ND" -or $this.Weight.CIAR.ContainsKey($CR)))  { $badMetrics.Add("CR") | Out-Null }
     if (!($IR -eq "ND" -or $this.Weight.CIAR.ContainsKey($IR)))   { $badMetrics.Add("IR") | Out-Null }
     if (!($AR -eq "ND" -or $this.Weight.CIAR.ContainsKey($AR)))   { $badMetrics.Add("AR") | Out-Null }
-    
+
     if ($badMetrics.Count > 0) {
       return @{ Success = $false; errorType = "UnknownMetricValue"; errorMtrics = $badMetrics}
     }
-    
+
     # GATHER WEIGHTS FOR ALL METRICS
     # Base
     $metricWeightAV  = $this.Weight.AV[$AV]
@@ -249,34 +249,34 @@
     $metricWeightC   = $this.Weight.CIA[$C]
     $metricWeightI   = $this.Weight.CIA[$I]
     $metricWeightA   = $this.Weight.CIA[$A]
-    
+
     # Temporal
     $metricWeightE   = $this.Weight.E[$E]
     $metricWeightRL  = $this.Weight.RL[$RL]
     $metricWeightRC  = $this.Weight.RC[$RC]
-    
+
     # Environmental
     $metricWeightCDP = $this.Weight.CDP[$CDP]
     $metricWeightTD  = $this.Weight.TD[$TD]
     $metricWeightCR  = $this.Weight.CIAR[$CR]
     $metricWeightIR  = $this.Weight.CIAR[$IR]
     $metricWeightAR  = $this.Weight.CIAR[$AR]
-    
-    # CALCULATE THE CVSS BASE SCORE   
+
+    # CALCULATE THE CVSS BASE SCORE
     $exploitabalityScore = $this.exploitabilityCoefficient * $metricWeightAV * $metricWeightAC * $metricWeightAU
     $impactScore = 10.41*(1 - ((1 - $metricWeightC) * (1 - $metricWeightI) * (1 - $metricWeightA)))
     #$fImpactScore = if ($impactScore -eq 0){ 0 } else { 1.176 }
     $baseScore =  $this.roundUp1(((0.6*$impactScore) + (0.4*$exploitabalityScore) - 1.5) * $($this.fImpact($impactScore)) )
-    
+
     # CALCULATE THE CVSS TEMPORAL SCORE
     $temporalScore = $this.roundUp1($baseScore*$metricWeightE*$metricWeightRL*$metricWeightRC)
-    
+
     # CALCULATE THE CVSS ENVIRONMENTAL SCORE
     $adjustedImpact = [Math]::Min(10.41*(1 - ((1 - $metricWeightC*$metricWeightCR)*(1 - $metricWeightI*$metricWeightIR)*(1 - $metricWeightA*$metricWeightAR))),10)
     $adjustedBase = $this.roundUp1(((0.6*$adjustedImpact) + (0.4*$exploitabalityScore) - 1.5) * $($this.fImpact($adjustedImpact)))
     $adjustedTemporal = $this.roundUp1($adjustedBase*$metricWeightE*$metricWeightRL*$metricWeightRC)
     $envScore = $this.roundUp1(($adjustedTemporal+(10 - $adjustedTemporal)*$metricWeightCDP) * $metricWeightTD)
-    
+
     # CONSTRUCT THE VECTOR STRING
     $vectorString = $this.CVSSVersionIdentifier +
       "/AV:" + $AV +
@@ -297,7 +297,7 @@
     if ($CR  -ne "ND") {$vectorString = $vectorString + "/CR:" + $CR}
     if ($IR  -ne "ND") {$vectorString = $vectorString + "/IR:" + $IR}
     if ($AR  -ne "ND") {$vectorString = $vectorString + "/AR:" + $AR}
-    
+
     # Return an object containing the scores for all three metric groups, and an overall vector string.
       return @{
         Success = $true;
@@ -313,7 +313,7 @@
         vectorString = $vectorString
       }
   }
-  
+
    <#  ** CVSS.calculateCVSSFromVector **
        *
        * Takes Base, Temporal and Environmental metric values as a single string in the Vector String format defined
@@ -338,18 +338,18 @@
         CDP = $null; TD = $null;
         CR = $null; IR = $null; AR = $null
       }
-      
+
       # If input validation fails, this array is populated with strings indicating which metrics failed validation.
       [System.Collections.ArrayList]$badMetrics = @()
-      
+
       if (!($this.vectorStringRegex_20.IsMatch($vectorString))) {
         return @{ Success = $false; errorType = "MalformedVectorString"}
       }
-      
+
       # Add 1 to the length of the CVSS Identifier to include the first slash after the Identifer
       # So that when the split happens a $null value is not created
       $metricNameValue = $vectorString.Substring($this.CVSSVersionIdentifier.length + 1).split("/") #-join ",").Trim(",").split(",")
-      
+
       foreach($i in $metricNameValue) {
         if ($metricNameValue.Contains($i)) { # Validating Input
 
@@ -362,11 +362,11 @@
           }
         }
       }
-      
+
      if ($badMetrics.Count -gt 0) {
         return @{ Success = $false; errorType = "MultipleDefinitionsOfMetric"; errorMetrics = $badMetrics }
      }
-     
+
      return $this.calculateCVSSFromMetrics(
       $metricValues.AV,  $metricValues.AC,  $metricValues.AU,
       $metricValues.C,   $metricValues.I,   $metricValues.A,
@@ -374,7 +374,7 @@
       $metricValues.CDP,  $metricValues.TD,
       $metricValues.CR,  $metricValues.IR,  $metricValues.AR)
   }
-  
+
   #return $object
   return $CVSS
 }

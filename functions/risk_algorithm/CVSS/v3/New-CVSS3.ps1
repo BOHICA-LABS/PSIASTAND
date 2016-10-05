@@ -140,28 +140,28 @@
 
   Add-Member -InputObject $CVSS ScriptMethod calculateCVSSFromMetrics {
     Param(
-        $AttackVector,
-        $AttackComplexity,
-        $PrivilegesRequired,
-        $UserInteraction,
-        $Scope,
-        $Confidentiality,
-        $Integrity,
-        $Availability,
-        $ExploitCodeMaturity,
-        $RemediationLevel,
-        $ReportConfidence,
-        $ConfidentialityRequirement,
-        $IntegrityRequirement,
-        $AvailabilityRequirement,
-        $ModifiedAttackVector,
-        $ModifiedAttackComplexity,
-        $ModifiedPrivilegesRequired,
-        $ModifiedUserInteraction,
-        $ModifiedScope,
-        $ModifiedConfidentiality,
-        $ModifiedIntegrity,
-        $ModifiedAvailability
+      $AttackVector,
+      $AttackComplexity,
+      $PrivilegesRequired,
+      $UserInteraction,
+      $Scope,
+      $Confidentiality,
+      $Integrity,
+      $Availability,
+      $ExploitCodeMaturity,
+      $RemediationLevel,
+      $ReportConfidence,
+      $ConfidentialityRequirement,
+      $IntegrityRequirement,
+      $AvailabilityRequirement,
+      $ModifiedAttackVector,
+      $ModifiedAttackComplexity,
+      $ModifiedPrivilegesRequired,
+      $ModifiedUserInteraction,
+      $ModifiedScope,
+      $ModifiedConfidentiality,
+      $ModifiedIntegrity,
+      $ModifiedAvailability
     )
 
     # If input validation fails, this array is populated with strings indicating which metrics failed validation.
@@ -237,7 +237,7 @@
     if (!$this.Weight.CIA.ContainsKey($A))   { $badMetrics.Add("A") | Out-Null }
 
     if (!$this.Weight.E.ContainsKey($E))     { $badMetrics.Add("E") | Out-Null }
-    if (!$this.Weight.RL.ContainsKey($RL))   { $badMetrics.Add("RL") | Out-Null } 
+    if (!$this.Weight.RL.ContainsKey($RL))   { $badMetrics.Add("RL") | Out-Null }
     if (!$this.Weight.RC.ContainsKey($RC))   { $badMetrics.Add("RC") | Out-Null }
 
     if (!($CR  -eq "X" -or $this.Weight.CIAR.ContainsKey($CR)))  { $badMetrics.Add("CR") | Out-Null }
@@ -326,9 +326,9 @@
     $envModifiedExploitabalitySubScore = $this.exploitabilityCoefficient * $metricWeightMAV * $metricWeightMAC * $metricWeightMPR * $metricWeightMUI
 
     $envImpactSubScoreMultiplier = [math]::Min(1 - (
-                                                 (1 - $metricWeightMC * $metricWeightCR) *
-                                                 (1 - $metricWeightMI * $metricWeightIR) *
-                                                 (1 - $metricWeightMA * $metricWeightAR)), 0.915)
+        (1 - $metricWeightMC * $metricWeightCR) *
+        (1 - $metricWeightMI * $metricWeightIR) *
+    (1 - $metricWeightMA * $metricWeightAR)), 0.915)
 
     if ($MS -eq "U" -or ($MS -eq "X" -and $S -eq "U")) {
       $envModifiedImpactSubScore = $metricWeightMS * $envImpactSubScoreMultiplier
