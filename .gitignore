@@ -11,3 +11,6 @@
 
 # Remove Staging Folder
 Staging/
+
+# remove files
+*0
