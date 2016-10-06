@@ -288,8 +288,8 @@
 
     # CALCULATE THE CVSS BASE SCORE
 
-    $baseScore
-    $impactSubScore
+    $baseScore = $null
+    $impactSubScore = $null
     $exploitabalitySubScore = $this.exploitabilityCoefficient * $metricWeightAV * $metricWeightAC * $metricWeightPR * $metricWeightUI
     $impactSubScoreMultiplier = (1 - ((1 - $metricWeightC) * (1 - $metricWeightI) * (1 - $metricWeightA)))
 
@@ -321,8 +321,8 @@
     #   Environmental metrics group in place of the values specified in the Base Score, and any additional weightings
     #   given in the Environmental metrics group.
 
-    $envScore
-    $envModifiedImpactSubScore
+    $envScore = $null
+    $envModifiedImpactSubScore = $null
     $envModifiedExploitabalitySubScore = $this.exploitabilityCoefficient * $metricWeightMAV * $metricWeightMAC * $metricWeightMPR * $metricWeightMUI
 
     $envImpactSubScoreMultiplier = [math]::Min(1 - (

@@ -53,11 +53,3 @@ Describe "New-CVSS2 PS: $PSVersion"{
     }
   }
 }
-
-$path = "..\..\..\..\..\PSIASTAND.psd1"
-Import-Module $path
-Import-Module Pester
-
-Invoke-Pester
-Remove-Module $path
-Remove-Module Pester
