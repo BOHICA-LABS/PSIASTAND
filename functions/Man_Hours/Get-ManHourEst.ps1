@@ -86,7 +86,7 @@ function Get-ManHourEst
   }
 
   $estimatedHours = $countOfHours * 1 #.60 # we counted the total man hours for the entire enclave. Now we just want to pull 60% for the estimate
-  $estimateWeeks = $estimatedHours / 169.6 # this is the avage amount of time the team can speed performing the IV&V
+  $estimateWeeks = $estimatedHours / 169.6 # this is the averge amount of time the team can speed performing the IV&V
   $estimateMonths = $estimateWeeks / 4
 
   Write-Host ("Total Hours to complete IV&V: {0}" -f $estimatedHours)
