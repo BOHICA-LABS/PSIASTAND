@@ -2,39 +2,29 @@
   <#
       .Synopsis
       Continuously monitors a directory tree and write to the output the path of the file that has changed.
-
       .Description
       This powershell cmdlet continuously monitors a directory tree and write to the output the path of the file that has changed.
       This allows you to create an script that for instance, run a suite of unit tests when an specific file has changed using powershell pipelining.
-
       .Parameter $location
       The directory to watch. Optional, default to current directory.
-
       .Parameter $filter
       Filter for only the files you are interested in.
-
       .Parameter $output
       the directory to create the log. Will append if log is currentlyt in the folder Parameter is optional
-
       .Parameter $name
       This is the name of the report to create
-
       .Parameter $testmode
       This is for testing. It will exit the while loop after the defined number of Secounds have passed
-
       .Paramter $passthur
       This will output the objects to the shell in theroy.
-
       .Parameter $monmode
       When enabled it writes detected changes to the console.
-
       .Parameter $includeSubdirectories
       .Parameter $includeChanged
       .Parameter $includeRenamed
       .Parameter $includeCreated
       .Parameter $includeDeleted
       .Link
-
       .Example
       Import-Module pswatch
       watch "Myfolder\Other" | %{
@@ -44,22 +34,17 @@
       Description
       -----------
       A simple example.
-
       .Example
       watch | Get-Item | Where-Object { $_.Extension -eq ".js" } | %{
       do the magic...
       }
-
       Description
       -----------
       You can filter by using powershell pipelining.
-
       .Version
       1.0.0.0 (09.16.2016)
         - Initial release
   #>
-
-
   # Define the paramters for the function
   param (
     [string]$location = $(Get-Location),
@@ -99,8 +84,6 @@
     # nothing to do here. This is expected
   }
 
-
-
   if (($output -and !$name) -or (!$output -and $name))
   {
     Throw "Cant create output if both name and output location are not defined"
@@ -132,7 +115,6 @@
       return $Event
     } | Out-Null # suppress Console Output
   }
-
   if ($includeChanged)
   {
     Register-ObjectEvent $watcher Changed -SourceIdentifier FileChanged -Action {
@@ -153,12 +135,10 @@
       Clear-Host # wipe the screen
       }
   #>
-
   if ($testmode) # used for testing. Set the forced exit time
   {
     $exitTime = (Get-Date).AddSeconds($testmode)
   }
-
   $monitoring = $true
   while($monitoring)
   {

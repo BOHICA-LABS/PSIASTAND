@@ -4,12 +4,9 @@
     .Version
     1.0.0.0
 #>
-
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $modroot = "..\..\..\..\PSIASTAND.psd1"
-
-
 $moduleName = 'PSIASTAND'
 $PSVersion = $PSVersionTable.PSVersion.Major
 
@@ -17,7 +14,6 @@ Describe "Start-Watcher PS: $PSVersion"{
   Context 'Strict Mode'{
     # Enable Strict Mode in Powershell
     Set-StrictMode -Version latest
-
     # Active the Watcher
     Start-Job -Name "File_Builder" -scriptblock {
       Start-Sleep -Seconds 5
@@ -28,11 +24,17 @@ Describe "Start-Watcher PS: $PSVersion"{
     } -ArgumentList $TestDrive
 
     Start-Watcher -location $TestDrive -output $TestDrive -name 'Test_Watch' -testmode 15
+<<<<<<< HEAD
 
     Get-Job -Name "File_Builder" | Remove-Job -Force # Remove Job "Cleaning up the session"
 
     it "Should detect 4 events"{
 
+=======
+    Get-Job -Name "File_Builder" | Remove-Job -Force # Remove Job "Cleaning up the session"
+
+    it "Should detect 4 events"{
+>>>>>>> 25-merge-the-man-hour-calculator-into-psiastand
       #Get-ChildItem -Path "TestDrive:\"
       $eventReport = Import-Csv -Path 'TestDrive:\Test_Watch.csv'
       $eventReport.Count | Should Be 4
