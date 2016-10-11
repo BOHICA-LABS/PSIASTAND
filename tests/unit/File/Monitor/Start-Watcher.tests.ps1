@@ -24,17 +24,9 @@ Describe "Start-Watcher PS: $PSVersion"{
     } -ArgumentList $TestDrive
 
     Start-Watcher -location $TestDrive -output $TestDrive -name 'Test_Watch' -testmode 15
-<<<<<<< HEAD
-
     Get-Job -Name "File_Builder" | Remove-Job -Force # Remove Job "Cleaning up the session"
 
     it "Should detect 4 events"{
-
-=======
-    Get-Job -Name "File_Builder" | Remove-Job -Force # Remove Job "Cleaning up the session"
-
-    it "Should detect 4 events"{
->>>>>>> 25-merge-the-man-hour-calculator-into-psiastand
       #Get-ChildItem -Path "TestDrive:\"
       $eventReport = Import-Csv -Path 'TestDrive:\Test_Watch.csv'
       $eventReport.Count | Should Be 4
