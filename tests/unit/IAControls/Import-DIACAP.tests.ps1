@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Import-DIACAP PS: $PSVersion" {
+Describe -tag 'Import-DIACAP' "Import-DIACAP PS: $PSVersion" {
 
     Copy-Item "$Global:testData\Controls\FAIL_Sample_DODI_8500_2_Controls.xlsx" "TestDrive:\FAIL_Sample_DODI_8500_2_Controls.xlsx"
     Copy-Item "$Global:testData\Controls\Sample_DODI_8500_2_Controls.xlsx" "TestDrive:\Sample_DODI_8500_2_Controls.xlsx"

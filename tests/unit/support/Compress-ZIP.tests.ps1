@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Compress-ZIP PS: $PSVersion" {
+Describe -tag 'Compress-ZIP' "Compress-ZIP PS: $PSVersion" {
 
     Setup -Dir results
     Setup -File results\sample.txt

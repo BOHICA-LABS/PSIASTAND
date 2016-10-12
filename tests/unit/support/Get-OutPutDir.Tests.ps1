@@ -6,7 +6,7 @@ $moduleName = "PSIASTAND"
 
 #Import-Module "$here\..\..\..\$($moduleName)"
 #InModuleScope nessusOpenPorts {
-    Describe "Get-OutPutDir" {
+    Describe -tag 'Get-OutPutDir' "Get-OutPutDir" {
         Setup -Dir Temp
 
         It "should return Path Exsists" {

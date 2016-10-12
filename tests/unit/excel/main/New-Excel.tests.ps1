@@ -19,7 +19,7 @@ $PSVersion = $PSVersionTable.PSVersion.Major
     $Files = Get-ChildItem $PSScriptRoot | Where {-not $_.PSIsContainer}
 
 
-Describe "New-Excel PS$PSVersion" {
+Describe -tag 'New-Excel' "New-Excel PS: $PSVersion" {
 
     Context 'Strict mode' {
 

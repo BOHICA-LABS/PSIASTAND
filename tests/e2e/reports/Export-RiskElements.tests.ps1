@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Export-RiskElements PS: $PSVersion" {
+Describe -tag 'Export-RiskElements' "Export-RiskElements PS: $PSVersion" {
 
     Setup -Dir CKL
     Setup -Dir Nessus

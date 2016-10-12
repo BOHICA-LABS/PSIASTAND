@@ -18,7 +18,7 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 
     $Files = Get-ChildItem $PSScriptRoot | Where {-not $_.PSIsContainer}
 
-Describe "Add-PivotChart PS$PSVersion" {
+Describe -tag 'Add-PivotChart' "Add-PivotChart PS: $PSVersion" {
 
     Context 'Strict mode' {
 

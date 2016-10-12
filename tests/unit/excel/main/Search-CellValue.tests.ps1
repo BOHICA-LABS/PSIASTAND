@@ -18,7 +18,7 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 
     $Files = Get-ChildItem $PSScriptRoot | Where {-not $_.PSIsContainer}
 
-Describe "Search-CellValue PS$PSVersion" {
+Describe -tag 'Search-CellValue' "Search-CellValue PS: $PSVersion" {
 
     Context 'Strict mode' {
 

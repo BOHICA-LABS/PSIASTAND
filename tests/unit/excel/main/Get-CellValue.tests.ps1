@@ -18,7 +18,7 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 
     $Files = Get-ChildItem $PSScriptRoot | Where {-not $_.PSIsContainer}
 
-Describe "Get-CellValue PS$PSVersion" {
+Describe -tag 'Get-CellValue' "Get-CellValue PS: $PSVersion" {
 
     Context 'Strict mode' {
 

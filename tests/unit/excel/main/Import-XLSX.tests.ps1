@@ -18,7 +18,7 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 
     $Files = Get-ChildItem $PSScriptRoot | Where {-not $_.PSIsContainer}
 
-Describe "Import-XLSX PS$PSVersion" {
+Describe -tag 'Import-XLSX' "Import-XLSX PS: $PSVersion" {
 
     Context 'Strict mode' {
 

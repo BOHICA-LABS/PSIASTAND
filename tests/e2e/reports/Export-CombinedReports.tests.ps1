@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = 'PSIASTAND'
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Export-CombinedReports PS: $PSVersion" {
+Describe -tag 'Export-CombinedReports' "Export-CombinedReports PS: $PSVersion" {
 
     Setup -Dir nofiles
     Setup -Dir results

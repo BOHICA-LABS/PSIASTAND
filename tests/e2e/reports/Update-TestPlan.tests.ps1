@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Update-TestPlan PS: $PSVersion" {
+Describe -tag 'Update-TestPlan' "Update-TestPlan PS: $PSVersion" {
 
     Setup -Dir CKL
     SetUp -Dir testplan

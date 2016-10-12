@@ -6,7 +6,7 @@ $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
 
-Describe "ConvertTo-CKL PS: $PSVersion" {
+Describe -tag 'ConvertTo-CKL' "ConvertTo-CKL PS: $PSVersion" {
 
     # Stig viewer version
     $stigViewerVersion = "DISA STIG Viewer : 1.2.0"

@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Import-CKL PS: $PSVersion" {
+Describe -tag 'Import-CKL' "Import-CKL PS: $PSVersion" {
 
     Copy-Item "$Global:testData\CKL\CKLv1\sample.ckl" "TestDrive:\sample.ckl"
     Copy-Item "$Global:testData\CKL\CKLv2\sampleV2.ckl" "TestDrive:\sampleV2.ckl"

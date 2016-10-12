@@ -2,7 +2,7 @@
 $root = "$here\..\..\..\"
 
 
-Describe 'Code Statistics' {
+Describe -tag 'Statistics' 'Code Statistics' {
 
         $files = @(
             Get-ChildItem "$root" -Include *ps1, *psm1

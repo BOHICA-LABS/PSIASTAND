@@ -18,7 +18,7 @@ $SQLiteFile = "$here\Working.SQLite"
 Remove-Item $SQLiteFile  -force -ErrorAction SilentlyContinue
 Copy-Item $here\Names.SQLite $here\Working.SQLite -force
 
-Describe "Out-DataTable PS$PSVersion" {
+Describe -tag 'Out-DataTable' "Out-DataTable PS: $PSVersion" {
 
     Context 'Strict mode' {
 

@@ -18,7 +18,7 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 
     $Files = Get-ChildItem $PSScriptRoot | Where {-not $_.PSIsContainer}
 
-Describe "Add-Table PS$PSVersion" {
+Describe -tag 'Add-Table' "Add-Table PS: $PSVersion" {
 
     Context 'Strict mode' {
 

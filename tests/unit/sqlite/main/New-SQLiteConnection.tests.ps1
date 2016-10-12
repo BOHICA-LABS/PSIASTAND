@@ -18,7 +18,7 @@ $SQLiteFile = "$here\Working.SQLite"
 Remove-Item $SQLiteFile  -force -ErrorAction SilentlyContinue
 Copy-Item $here\Names.SQLite $here\Working.SQLite -force
 
-Describe "New-SQLiteConnection PS$PSVersion" {
+Describe -tag 'New-SQLiteConnection' "New-SQLiteConnection PS: $PSVersion" {
 
     Context 'Strict mode' {
 

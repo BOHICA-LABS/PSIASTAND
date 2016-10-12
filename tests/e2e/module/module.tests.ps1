@@ -8,7 +8,7 @@ $tempPath = "H:\Powershell\Modules\Custom\NessusOpenPorts"
 $root = "$here\..\..\..\"
 
 # General manifest annd Changelog checks
-Describe -Tags 'VersionChecks' "Powershell IA Standard Library manifest and changelog" {
+Describe -Tag 'VersionChecks' "Powershell IA Standard Library manifest and changelog" {
     $Script:manifest - $null
         It "has a valid manifest" {
             {
@@ -53,7 +53,7 @@ Describe -Tags 'VersionChecks' "Powershell IA Standard Library manifest and chan
 #Import-Module "$((Get-Location).Path)\..\..\..\$($moduleName)"
 #Import-Module "$here\..\..\..\$($moduleName)"
 InModuleScope PSIASTAND {
-    Describe 'SafeCommands table' {
+    Describe -tag 'SafeCommands' 'SafeCommands table' {
         $path = $ExecutionContext.SessionState.Module.ModuleBase
         $filesToCheck = Get-ChildItem -Path $path -Recurse -Include *.ps1,*.psm1 -Exclude *.Tests.ps1
         $i = 0
@@ -88,7 +88,7 @@ InModuleScope PSIASTAND {
 #Remove-Module $moduleName
 
 # Style Enforcement
-Describe 'Style rules' {
+Describe -tag 'Style' 'Style rules' {
 
   #  $files = @(
    #     Get-ChildItem "$((Get-Location).Path)" -Include *ps1, *psm1
