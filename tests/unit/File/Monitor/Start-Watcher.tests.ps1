@@ -10,7 +10,7 @@ $modroot = "..\..\..\..\PSIASTAND.psd1"
 $moduleName = 'PSIASTAND'
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Start-Watcher PS: $PSVersion"{
+Describe -tag 'Start-Watcher' "Start-Watcher PS: $PSVersion"{
   Context 'Strict Mode'{
     # Enable Strict Mode in Powershell
     Set-StrictMode -Version latest
