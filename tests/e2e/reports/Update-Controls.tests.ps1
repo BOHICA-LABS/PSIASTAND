@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Update-Controls PS: $PSVersion" {
+Describe -tag 'Update-Controls' "Update-Controls PS: $PSVersion" {
 
     Setup -Dir CKL
     Setup -Dir Controls

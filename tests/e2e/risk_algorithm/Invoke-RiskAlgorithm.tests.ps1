@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Invoke-RiskAlgorithm PS: $PSVersion" {
+Describe -tag 'Invoke-RiskAlgorithm' "Invoke-RiskAlgorithm PS: $PSVersion" {
 
     Setup -Dir Risk
     SetUp -Dir Map

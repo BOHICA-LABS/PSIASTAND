@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Export-CKL PS: $PSVersion" {
+Describe -tag 'Export-CKL' "Export-CKL PS: $PSVersion" {
 
     Setup -Dir results
     Setup -Dir recursion

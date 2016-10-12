@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Get-Compliance PS: $PSVersion" {
+Describe -tag 'Get-Compliance' "Get-Compliance PS: $PSVersion" {
 
     Setup -Dir CKLv1
     Setup -Dir CKLv2

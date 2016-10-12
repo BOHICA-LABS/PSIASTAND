@@ -5,7 +5,7 @@ $root = "$here\..\..\..\..\"
 
 # Module Checks
 #Import-Module "$here\..\..\..\..\$($moduleName)"
-Describe "Invoke-NessusOpenPorts" {
+Describe -tag 'Invoke-NessusOpenPorts' "Invoke-NessusOpenPorts" {
         Setup -File sample.nessus
         Setup -File anothersample.nessus
         Setup -File sample2.nessus
