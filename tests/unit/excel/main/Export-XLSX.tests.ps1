@@ -19,7 +19,7 @@ $PSVersion = $PSVersionTable.PSVersion.Major
     $Files = Get-ChildItem $PSScriptRoot | Where {-not $_.PSIsContainer}
 
 
-Describe "Export-XLSX PS$PSVersion" {
+Describe -tag 'Export-XLSX' "Export-XLSX PS: $PSVersion" {
 
     Context 'Strict mode' {
 

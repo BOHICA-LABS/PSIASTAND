@@ -18,7 +18,7 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 
     $Files = Get-ChildItem $PSScriptRoot | Where {-not $_.PSIsContainer}
 
-Describe "Save-Excel PS$PSVersion" {
+Describe -tag 'Save-Excel' "Save-Excel PS: $PSVersion" {
 
     Context 'Strict mode' {
 

@@ -18,7 +18,7 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 
     $Files = Get-ChildItem $PSScriptRoot | Where {-not $_.PSIsContainer}
 
-Describe "Close-Excel PS$PSVersion" {
+Describe -tag 'Close-Excel' "Close-Excel PS: $PSVersion" {
 
     Context 'Strict mode' {
 

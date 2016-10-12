@@ -18,7 +18,7 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 
     $Files = Get-ChildItem $PSScriptRoot | Where {-not $_.PSIsContainer}
 
-Describe "Join-Worksheet PS$PSVersion" {
+Describe -tag 'Join-Worksheet' "Join-Worksheet PS: $PSVersion" {
 
     Context 'Strict mode' {
 

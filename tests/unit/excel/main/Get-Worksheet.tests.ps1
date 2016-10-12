@@ -18,7 +18,7 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 
     $Files = Get-ChildItem $PSScriptRoot | Where {-not $_.PSIsContainer}
 
-Describe "Get-Worksheet PS$PSVersion" {
+Describe -tag 'Get-Worksheet' "Get-Worksheet PS: $PSVersion" {
 
  Context 'Strict mode' {
 
