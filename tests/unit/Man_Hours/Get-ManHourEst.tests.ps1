@@ -12,7 +12,7 @@ $modroot = "..\..\..\..\PSIASTAND.psd1"
 $moduleName = 'PSIASTAND'
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Get-ManHourEst PS: $PSVersion"{
+Describe -tag 'Get-ManHourEst' "Get-ManHourEst PS: $PSVersion"{
   $testingdata = "$($Global:testData)\Man_Hours"
   Context 'Strict Mode'{
     it "Should return '419' total man hours"{

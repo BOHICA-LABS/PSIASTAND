@@ -9,7 +9,7 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 
 #Import-Module "$here\..\..\..\..\$($moduleName)"
 
-Describe "Import-XML PS: $PSVersion"{
+Describe -tag 'Import-XML' "Import-XML PS: $PSVersion"{
 
     Setup -File sample.xml
     Setup -File failsample.xml

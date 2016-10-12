@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Expand-ZIP PS: $PSVersion" {
+Describe -tag 'Expand-ZIP' "Expand-ZIP PS: $PSVersion" {
 
     Setup -Dir results
     #Setup -Dir expand

@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Compress-Report PS: $PSVersion" {
+Describe -tag 'Compress-Report' "Compress-Report PS: $PSVersion" {
 
     Setup -Dir CKL
     Setup -Dir Nessus

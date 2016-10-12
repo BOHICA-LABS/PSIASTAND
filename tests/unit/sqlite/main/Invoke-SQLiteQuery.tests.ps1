@@ -19,7 +19,7 @@ Remove-Item $SQLiteFile  -force -ErrorAction SilentlyContinue
 Copy-Item $here\Names.SQLite $here\Working.SQLite -force
 $Script:Connection = New-SQLiteConnection @Verbose -DataSource :MEMORY:
 
-Describe "Invoke-SQLiteQuery (Requires New-SQLiteConnection) PS$PSVersion" {
+Describe -tag 'Invoke-SQLiteQuery' "Invoke-SQLiteQuery (Requires New-SQLiteConnection) PS$PSVersion" {
 
     Context 'Strict mode' {
 

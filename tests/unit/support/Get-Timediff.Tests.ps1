@@ -6,7 +6,7 @@ $moduleName = "PSIASTAND"
 
 #Import-Module "$here\..\..\..\$($moduleName)"
 #InModuleScope nessusOpenPorts {
-    Describe "Get-Timediff" {
+    Describe -tag 'Get-Timediff' "Get-Timediff" {
         It "should return 1 hour difference" {
             Get-Timediff -Start $(Get-Date -Hour 1 -Minute 1 -Second 1 -Format HH:mm:ss) -End $(Get-Date -Hour 2 -Minute 1 -Second 1 -Format HH:mm:ss) | Should Be "1:0:0"
         }

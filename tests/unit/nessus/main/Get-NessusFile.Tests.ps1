@@ -6,7 +6,7 @@ $moduleName = "PSIASTAND"
 
 #Import-Module "$here\..\..\..\..\$($moduleName)"
 #InModuleScope nessusOpenPorts {
-    Describe "Get-NessusFile" {
+    Describe -tag 'Get-NessusFile' "Get-NessusFile" {
         Setup -File somefile.nessus
         Setup -File somefile.test.nessus
         Setup -File somefile.text

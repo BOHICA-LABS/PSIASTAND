@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Join-Controls PS: $PSVersion" {
+Describe -tag 'Join-Controls' "Join-Controls PS: $PSVersion" {
 
     Copy-Item "$Global:testData\CKL\CKLv1\Sample04_Win2008R2MS.ckl" "TestDrive:\Sample04_Win2008R2MS.ckl"
     Copy-Item "$Global:testData\Controls\Sample_DODI_8500_2_Controls.xlsx" "TestDrive:\Sample_DODI_8500_2_Controls.xlsx"

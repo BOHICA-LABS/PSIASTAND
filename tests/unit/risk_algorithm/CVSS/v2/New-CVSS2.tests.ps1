@@ -14,7 +14,7 @@ $modroot = "..\..\..\..\PSIASTAND.psd1"
 $moduleName = 'PSIASTAND'
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "New-CVSS2 PS: $PSVersion"{
+Describe -tag 'New-CVSS2' "New-CVSS2 PS: $PSVersion"{
   Context 'Strict Mode'{
     # Enable Strict Mode in Powershell
     Set-StrictMode -Version latest

@@ -5,7 +5,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 $moduleName = "PSIASTAND"
 $PSVersion = $PSVersionTable.PSVersion.Major
 
-Describe "Import-Nessus PS: $PSVersion" {
+Describe -tag 'Import-Nessus' "Import-Nessus PS: $PSVersion" {
 
     Copy-Item "$here\Nessus_Sample_Linux.nessus" "TestDrive:\Nessus_Sample_Linux.nessus"
     Copy-Item "$here\Nessus_Sample_Windows.nessus" "TestDrive:\Nessus_Sample_Windows.nessus"
