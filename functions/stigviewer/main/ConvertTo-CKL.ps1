@@ -16,6 +16,8 @@ Path to look for
 
 1.0.1 (08.24.2016)
     -Added support for ckl v2
+1.0.1.1 (10/17/2016)
+    -Added status conversion for trackers for CKLv2
 
 #>
     Param(
@@ -225,6 +227,26 @@ Path to look for
                             foreach($property in $statusProperties ){
 
                                 #This loops through all $statusProperties and builds them into the xml
+                                If($property -eq "STATUS"){
+                                    if(($row.$($property)).tolower() -like "NotAFinding"){
+                                        $row.$($property) = "NotAFinding"
+                                    }
+                                    elseif(($row.$($property)).tolower() -like "Not_Reviewed"){
+                                        $row.$($property) = "Not_Reviewed"
+                                    }
+                                    elseif(($row.$($property)).tolower() -like "Open"){
+                                        $row.$($property) = "Open"
+                                    }
+                                    elseif(($row.$($property)).tolower() -like "pass" -or ($row.$($property)).tolower() -like "passed"){ #if Status eq pass or passed
+                                        $row.$($property) = "NotAFinding"
+                                    }
+                                    elseif(($row.$($property)).tolower() -like "fail" -or ($row.$($property)).tolower() -like "failed"){ # if Status eq fail or failed
+                                        $row.$($property) = "Open"
+                                    }
+                                    elseif(($row.$($property)).tolower() -like "na" -or ($row.$($property)).tolower() -like "n/a" -or ($row.$($property)).tolower() -like "n\a" -or ($row.$($property)).tolower() -like "not applicable"){ # if status eq not applicable
+                                        $row.$($property) = "Not_Applicable"
+                                    }
+                                }
                                 $XmlWriter.WriteStartElement($property) # Sets element name for current Property
                                     $XmlWriter.WriteString($($row.$($property))) # Sets element data for current Property
                                 $XmlWriter.WriteEndElement() # end element for current Property
