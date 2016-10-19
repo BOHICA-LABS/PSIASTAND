@@ -67,7 +67,8 @@
                 $compiledCKLObj += $cklfile
             } # End For loop
             $filteredcompiledCKLObj = $compiledCKLObj | Where-Object{$_.Status -match "Open"}
-            $compressedcompiledCKLObj = Compress-Report -report $filteredcompiledCKLObj -ckl
+            $compressedcompiledCKLObj = $filteredcompiledCKLObj
+            #$compressedcompiledCKLObj = Compress-Report -report $filteredcompiledCKLObj -ckl
         }
         Catch{
             Throw "$($file.name) CKL failed to process"
