@@ -199,7 +199,11 @@ Path to look for
                                     $XmlWriter.WriteString($property) # Sets element name for current Property
                                 $XmlWriter.WriteEndElement() # end SID_NAME Element
                                 $XmlWriter.WriteStartElement("SID_DATA") # SSID_DATA Element
-                                    $XmlWriter.WriteString($($stig.$($property))) # Sets elemnt data for current Property
+                                    If($map.contains($property)){ # Looks see if the property exists in the mapping hash table
+                                        $XmlWriter.WriteString($($stig.$($map.$($property))))# Sets element data for current Property
+                                    }else{
+                                        $XmlWriter.WriteString($($stig.$($property))) # Sets elemnt data for current Property
+                                    }
                                 $XmlWriter.WriteEndElement() # end SID_DATA Element
                             $XmlWriter.WriteEndElement() # end SI_DATA Element
                         }
@@ -218,7 +222,7 @@ Path to look for
                                         $XmlWriter.WriteString($property) # Sets element name for current Property
                                     $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
                                     $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                        If($map.contains($property)){
+                                        If($map.contains($property)){ # Looks see if the property exists in the mapping hash table
                                             $XmlWriter.WriteString($($row.$($map.$($property))))# Sets element data for current Property
                                         }else{
                                             $XmlWriter.WriteString($($row.$($property)))# Sets element data for current Property
@@ -252,7 +256,11 @@ Path to look for
                                     }
                                 }
                                 $XmlWriter.WriteStartElement($property) # Sets element name for current Property
-                                    $XmlWriter.WriteString($($row.$($property))) # Sets element data for current Property
+                                    If($map.contains($property)){ # Looks see if the property exists in the mapping hash table
+                                        $XmlWriter.WriteString($($row.$($map.$($property))))# Sets element data for current Property
+                                    }else{
+                                        $XmlWriter.WriteString($($row.$($property)))# Sets element data for current Property
+                                    }
                                 $XmlWriter.WriteEndElement() # end element for current Property
                             }
 
