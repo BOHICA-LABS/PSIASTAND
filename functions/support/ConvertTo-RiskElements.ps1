@@ -36,13 +36,26 @@
         if(!$ckl -and !$nessus -and !$diacap -and !$rmf){Throw "Report Type not selected"}
         if ($ckl) {
                 $Private:results = @()
+                $cklversion = $($($report.StigViewer_Version) | Select-Object -Unique)
                 foreach($Private:reportObj in $report){
                 $Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values")
-                if($Private:reportObj.Vuln_Num){
-                    $Private:entry.name = "$($Private:reportObj.STIG_Title) - ID: $($Private:reportObj.Vuln_Num) - $($Private:reportObj.Rule_Title)"
-                }
-                else{
-                    $Private:entry.name = "$($Private:reportObj.STIG_Title) - $($Private:reportObj.Rule_Title)"
+                switch($cklversion){
+                    1{
+                        if($Private:reportObj.Vuln_Num){
+                            $Private:entry.name = "$($Private:reportObj.STIG_Title) - ID: $($Private:reportObj.Vuln_Num) - $($Private:reportObj.Rule_Title)"
+                        }
+                        else{
+                            $Private:entry.name = "$($Private:reportObj.STIG_Title) - $($Private:reportObj.Rule_Title)"
+                        }
+                    }
+                    2{
+                        if($Private:reportObj.Vuln_Num){
+                            $Private:entry.name = "$($Private:reportObj.STIGRef) - ID: $($Private:reportObj.Vuln_Num) - $($Private:reportObj.Rule_Title)"
+                        }
+                        else{
+                            $Private:entry.name = "$($Private:reportObj.STIGRef) - $($Private:reportObj.Rule_Title)"
+                        }
+                    }
                 }
                 if($Private:reportObj.Vuln_Discuss){
                     $Private:entry.Weaknesses = "Description:" + "`r`n" + $($Private:reportObj.Vuln_Discuss) + "`r`n" + "Affected System:" + "`r`n" + $($Private:reportObj.AssetName -split "," -join "`r`n")
