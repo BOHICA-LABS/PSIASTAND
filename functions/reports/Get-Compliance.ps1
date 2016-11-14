@@ -92,14 +92,20 @@
             }
 
             2{
-                $stiglist = $($compiledCKLObj | Select stigid -Unique | ForEach-Object{$($_.stigid).trim()})
+                $stiglist = $($compiledCKLObj | Select STIGRef -Unique | ForEach {
+                    If($_.STIGRef.IndexOf('::') -gt 0) {
+                        $($_.STIGRef.SubString(0,$_.STIGRef.IndexOf('::'))).trim()
+                    }else{
+                        $_.STIGRef
+                    }
+                })
                 $complianceReport = @()
                 foreach ($stig in $stiglist) {
-                    $current = $($compiledCKLObj | Where-Object {$_.stigid -eq $stig})
+                    $current = $($compiledCKLObj | Where-Object {$_.STIGRef -like "$stig*"})
                     $Private:entry = ($Private:entry = " " | select-object STIG, Systems, System_Count, High_Count_Finding, MED_Count_Finding, LOW_Count_Finding, High_Total, MED_Total, LOW_Total, Total_Checks, Total_Points, Lost_Points, Compliance_Percentage, Compliant)
                     $Private:entry.STIG = $stig
-                    $Private:entry.Systems = $((($current | Select AssetName -Unique).AssetName) -Join "`n`r")
-                    $Private:entry.System_Count = $((($current | Select AssetName -Unique).AssetName).count)
+                    $Private:entry.Systems = $((($current | Select Host_Name -Unique).Host_Name) -Join "`n")
+                    $Private:entry.System_Count = $((($current | Select Host_Name -Unique).Host_Name).count)
                     $Private:entry.High_Count_Finding = $((($current | Where-Object {$_.Severity -eq "High" -and $_.Status -eq "Open" }).Status).count)
                     $Private:entry.MED_Count_Finding = $((($current | Where-Object {$_.Severity -eq "Medium" -and $_.Status -eq "Open" }).Status).count)
                     $Private:entry.LOW_Count_Finding = $((($current | Where-Object {$_.Severity -eq "Low" -and $_.Status -eq "Open" }).Status).count)

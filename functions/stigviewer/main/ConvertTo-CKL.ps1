@@ -188,7 +188,15 @@ Path to look for
                 $XmlWriter.WriteEndElement() # end ASSET Element
                 $XmlWriter.WriteStartElement("STIGS") # STIGS Element
                 $stigProperties = @("version","classification","stigid","description","filename","releaseinfo","title","uuid","notice","source")
-                foreach($stig in ($obj | Select-Object -Unique -Property $stigProperties)){
+                $stigPropertiesmapped = @()
+                foreach($stig in $stigProperties){
+                    If($map.contains($stig)){
+                        $stigPropertiesmapped += $($map.$stig)
+                    }else{
+                        $stigPropertiesmapped += $stig
+                    }
+                }
+                foreach($stig in ($obj | Select-Object -Unique -Property $stigPropertiesmapped)){
                     $XmlWriter.WriteStartElement("iSTIG") # iSTIG Element
                         $XmlWriter.WriteStartElement("STIG_INFO") # STIG_INFO Element
 

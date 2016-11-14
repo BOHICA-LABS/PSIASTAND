@@ -61,14 +61,25 @@
         if(!(Test-Path -Path $map)){Throw "Map path does not exist"}
         $riskelements = Import-XLSX -Path $risk
         $riskmap = Import-XLSX -Path $map
-        $riskmapnamelist = $(($riskmap | Select name).name)
+        $riskmapnamelist = $($(($riskmap | Select name).name).trim())
+        $unmappedrisks = @($riskmap)
         foreach ($element in $riskelements) {
-            if (!($riskmapnamelist -contains $($element.name))) {
-                Throw "$($element.name) is not mapped"
+            if (!($riskmapnamelist -like "$($(([regex]::Match($($($element.name).trim()),'(.* ID\: .*) - ')).Groups[1]).Value)*")) {
+                $unmappedrisk = "" | Select-Object ID, Name, Cat, "Assessed Risk Level", "Quantitative Values", Reason
+                $unmappedrisk.ID = $(([regex]::Match($($($element.name).trim()),'.* ID\: (.*) - ')).Groups[1]).Value
+                $unmappedrisk.Name = $($element.name).trim()
+                $unmappedrisk.Cat = $($element.Cat).trim()
+                $riskcount += 1
+                $unmappedrisks += $unmappedrisk
             }
         }
+        if($riskcount -gt 0){
+            Export-XLSX -Path "$(Split-Path $map -Parent)\Risk_Map_$(Get-Date -Format "MM.dd.yyyy-HHmm")_v2.xlsx" -InputObject $unmappedrisks
+            $unmappedrisks | Out-File "$($output)\$($name)_Mapping_Errors.txt"
+            Throw "$riskcount risk(s) are not mapped.  Created $(Split-Path $map -Parent)\Risk_Map_$(Get-Date -Format "MM.dd.yyyy-HHmm")_v2.xlsx"
+        }
         foreach ($element in $riskelements) {
-            $mapping = $riskmap | Where-Object { $_.Name -eq $($element.name) }
+            $mapping = $riskmap | Where-Object { $_.Name -like "$($(([regex]::Match($($($element.name).trim()),'(.* ID\: .*) - ')).Groups[1]).Value)*" }
             # IF mapping found more than 1 assigned first found
             #if($mapping -gt 1){$mapping = $mapping[0]}
             $mapping = $mapping[0]
