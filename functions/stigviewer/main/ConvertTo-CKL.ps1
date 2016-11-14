@@ -188,7 +188,15 @@ Path to look for
                 $XmlWriter.WriteEndElement() # end ASSET Element
                 $XmlWriter.WriteStartElement("STIGS") # STIGS Element
                 $stigProperties = @("version","classification","stigid","description","filename","releaseinfo","title","uuid","notice","source")
-                foreach($stig in ($obj | Select-Object -Unique -Property $stigProperties)){
+                $stigPropertiesmapped = @()
+                foreach($stig in $stigProperties){
+                    If($map.contains($stig)){
+                        $stigPropertiesmapped += $($map.$stig)
+                    }else{
+                        $stigPropertiesmapped += $stig
+                    }
+                }
+                foreach($stig in ($obj | Select-Object -Unique -Property $stigPropertiesmapped)){
                     $XmlWriter.WriteStartElement("iSTIG") # iSTIG Element
                         $XmlWriter.WriteStartElement("STIG_INFO") # STIG_INFO Element
 
@@ -199,7 +207,11 @@ Path to look for
                                     $XmlWriter.WriteString($property) # Sets element name for current Property
                                 $XmlWriter.WriteEndElement() # end SID_NAME Element
                                 $XmlWriter.WriteStartElement("SID_DATA") # SSID_DATA Element
-                                    $XmlWriter.WriteString($($stig.$($property))) # Sets elemnt data for current Property
+                                    If($map.contains($property)){ # Looks see if the property exists in the mapping hash table
+                                        $XmlWriter.WriteString($($stig.$($map.$($property))))# Sets element data for current Property
+                                    }else{
+                                        $XmlWriter.WriteString($($stig.$($property))) # Sets elemnt data for current Property
+                                    }
                                 $XmlWriter.WriteEndElement() # end SID_DATA Element
                             $XmlWriter.WriteEndElement() # end SI_DATA Element
                         }
@@ -208,7 +220,7 @@ Path to look for
                         $vulnProperties = @("Vuln_Num","Severity","Group_Title","Rule_ID","Rule_Ver","Rule_Title","Vuln_Discuss","IA_Controls","Check_Content","Fix_Text",
                             "False_Positives","False_Negatives","Documentable","Mitigations","Potential_Impact","Third_Party_Tools","Mitigation_Control","Responsibility",
                             "Security_Override_Guidance","Check_Content_Ref","Class","STIGRef","TargetKey","CCI_REF")
-                        foreach($Private:row in $Obj | Where-Object { $stig.stigid -eq $_.stigid }){
+                        foreach($row in $Obj | Where-Object { $stig.stigid -eq $_.stigid }){
                             $XmlWriter.WriteStartElement("VULN") # VULN Element
 
                             #This loops through all $vulnProperties and builds them into the xml
@@ -218,7 +230,11 @@ Path to look for
                                         $XmlWriter.WriteString($property) # Sets element name for current Property
                                     $XmlWriter.WriteEndElement() # end VULN_ATTRIBUTE Element
                                     $XmlWriter.WriteStartElement("ATTRIBUTE_DATA") # ATTRIBUTE_DATA Element
-                                        $XmlWriter.WriteString($($row.$($property)))# Sets element data for current Property
+                                        If($map.contains($property)){ # Looks see if the property exists in the mapping hash table
+                                            $XmlWriter.WriteString($($row.$($map.$($property))))# Sets element data for current Property
+                                        }else{
+                                            $XmlWriter.WriteString($($row.$($property)))# Sets element data for current Property
+                                        }
                                     $XmlWriter.WriteEndElement() # end ATTRIBUTE_DATA Element
                                 $XmlWriter.WriteEndElement() # end STIG_DATA Element
                             }
@@ -248,7 +264,11 @@ Path to look for
                                     }
                                 }
                                 $XmlWriter.WriteStartElement($property) # Sets element name for current Property
-                                    $XmlWriter.WriteString($($row.$($property))) # Sets element data for current Property
+                                    If($map.contains($property)){ # Looks see if the property exists in the mapping hash table
+                                        $XmlWriter.WriteString($($row.$($map.$($property))))# Sets element data for current Property
+                                    }else{
+                                        $XmlWriter.WriteString($($row.$($property)))# Sets element data for current Property
+                                    }
                                 $XmlWriter.WriteEndElement() # end element for current Property
                             }
 

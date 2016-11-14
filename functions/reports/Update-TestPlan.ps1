@@ -63,13 +63,33 @@
             Throw "$($file.name) CKL failed to process"
             exit
         }
-        $((($current | Select AssetName -Unique).AssetName))
-        if ($version -eq 1) {
-            #Try {
-                #$listofassets = $((($testplanimport | Select "Hardware Name" -Unique)."Hardware Name") | ForEach-Object {$_.trim()}) # for Later use
-                $listofimportassets = $((($compiledCKLObj | Select "AssetName" -Unique)."AssetName") | ForEach-Object {$_.trim()})
+        #$((($current | Select AssetName -Unique).AssetName))
+        $cklversion = $($compiledCKLObj | Select-Object StigViewer_Version -Unique).StigViewer_Version
+        switch ($cklversion) {
+            1 {
+                #Try {
+                    #$listofassets = $((($testplanimport | Select "Hardware Name" -Unique)."Hardware Name") | ForEach-Object {$_.trim()}) # for Later use
+                    $listofimportassets = $((($compiledCKLObj | Select "AssetName" -Unique)."AssetName") | ForEach-Object {$_.trim()})
+                    foreach ($assetname in $listofimportassets) {
+                        $findings = $($compiledCKLObj | Where-Object {$_."AssetName" -match $assetname})
+                        $importlist = $($testplanimport | Where-Object {$_."Hardware Name" -match $assetname})
+                        foreach ($finding in $findings) {
+                            $rowintestplan = $importlist | Where-Object {$_."Rule ID" -match $(($finding.Rule_ID) -replace "r\d+_rule")}
+                            if ($rowintestplan) {
+                                $rowintestplan."Implementation Result" = $(if($finding.STATUS -match "NotAfinding"){"Pass"}elseif($finding.STATUS -match "open"){"Fail"}else{$($finding.STATUS)})
+                                $rowintestplan."Implementer Comments" = $($finding.FINDING_DETAILS)
+                            }
+                        }
+                    }
+                #}
+            #Catch {
+            #}
+
+            }
+            2 {
+                $listofimportassets = $((($compiledCKLObj | Select "Host_Name" -Unique)."Host_Name") | ForEach-Object {$_.trim()})
                 foreach ($assetname in $listofimportassets) {
-                    $findings = $($compiledCKLObj | Where-Object {$_."AssetName" -match $assetname})
+                    $findings = $($compiledCKLObj | Where-Object {$_."Host_Name" -match $assetname})
                     $importlist = $($testplanimport | Where-Object {$_."Hardware Name" -match $assetname})
                     foreach ($finding in $findings) {
                         $rowintestplan = $importlist | Where-Object {$_."Rule ID" -match $(($finding.Rule_ID) -replace "r\d+_rule")}
@@ -79,16 +99,7 @@
                         }
                     }
                 }
-            #}
-        #Catch {
-        #}
-
-        }
-        elseif ($version -eq 2) {
-            #Place holder for Version 2 info
-        }
-        else {
-            Throw "Version unknown"
+            }
         }
     }
     END {
