@@ -27,7 +27,7 @@ The XML file to parse
     foreach($Private:ReportHost in $doc.NessusClientData_v2.Report.ReportHost){
 
         foreach($Private:ReportItemsingle in $Private:ReportHost.ReportItem){
-            $Private:entry = ($Private:entry = " " | select-object "host-ip", "host-fqdn", "netbios-name", port, svc_name, protocol, severity, pluginID, pluginName, pluginFamily, description, fname, plugin_modification_date, plugin_name, plugin_publication_date, plugin_type, risk_factor, script_version, solution, synopsis, plugin_output, Credentialed_Scan)
+            $Private:entry = ($Private:entry = " " | select-object "host-ip", "host-fqdn", "netbios-name", port, svc_name, protocol, severity, pluginID, pluginName, pluginFamily, description, fname, plugin_modification_date, plugin_name, plugin_publication_date, plugin_type, cvss_vector, risk_factor, script_version, solution, synopsis, plugin_output, Credentialed_Scan)
             $Private:entry.'host-ip' = $($Private:ReportHost.HostProperties.tag | Where-Object{$_.name -eq "host-ip"} | select -ExpandProperty "#text")
             $Private:entry.'host-fqdn' = $($Private:ReportHost.HostProperties.tag | Where-Object{$_.name -eq "host-fqdn"} | select -ExpandProperty "#text")
             $Private:entry.'netbios-name' = $($Private:ReportHost.HostProperties.tag | Where-Object{$_.name -eq "netbios-name"} | select -ExpandProperty "#text")
@@ -44,6 +44,7 @@ The XML file to parse
             $Private:entry.plugin_name = $Private:ReportItemsingle.plugin_name
             $Private:entry.plugin_publication_date = $Private:ReportItemsingle.plugin_publication_date
             $Private:entry.plugin_type = $Private:ReportItemsingle.plugin_type
+            $Private:entry.cvss_vector = if($Private:ReportItemsingle.cvss_vector){$Private:ReportItemsingle.cvss_vector}else{'N/A'}
             $Private:entry.risk_factor = $Private:ReportItemsingle.risk_factor
             $Private:entry.script_version = $Private:ReportItemsingle.script_version
             $Private:entry.solution = $Private:ReportItemsingle.solution
