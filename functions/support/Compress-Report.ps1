@@ -21,6 +21,8 @@
 .VERSION
 1.0.0 (02.15.2016)
     -Intial Release
+1.0.0.1 (10/20/2016)
+    -Added in cklv2
 #>
 
     [CmdletBinding()]
@@ -36,55 +38,81 @@
         if ($ckl) {
             Try{
                 $Private:results = @()
-                foreach($Private:reportObj in $report){
-                    $Private:reportObjHolding = $Private:results | Where-Object{$_.STIG_Title -eq $Private:reportObj.STIG_Title -and $_.Group_Title -eq $Private:reportObj.Group_Title -and $_.Vuln_Num -eq $Private:reportObj.Vuln_Num}
-                    # Check if the object has already been created
-                    if($Private:reportObjHolding){
-                        if(!($Private:reportObjHolding.AssetName.split(",") -contains $Private:reportObj.AssetName)){
-                            $Private:reportObjHolding.AssetName += ","+$Private:reportObj.AssetName
-                            $Private:reportObjHolding.vuln_count ++
-                            #$Private:reportObjHolding.AssetName = $($Private:reportObjHolding.AssetName -join ",")
-                            if(!($Private:reportObjHolding.Finding_Details)){
-                                $Private:reportObjHolding.Finding_Details = $Private:reportObj.Finding_Details
+                $cklversion = $($report.StigViewer_Version | Select-Object -Unique)
+                switch ($cklversion){
+                    1 {
+                        foreach($Private:reportObj in $report){
+                            $Private:reportObjHolding = $Private:results | Where-Object{$_.STIG_Title -eq $Private:reportObj.STIG_Title -and $_.Group_Title -eq $Private:reportObj.Group_Title -and $_.Vuln_Num -eq $Private:reportObj.Vuln_Num}
+                            # Check if the object has already been created
+                            if($Private:reportObjHolding){
+                                if(!($Private:reportObjHolding.AssetName.split(",") -contains $Private:reportObj.AssetName)){
+                                    $Private:reportObjHolding.AssetName += ","+$Private:reportObj.AssetName
+                                    $Private:reportObjHolding.vuln_count ++
+                                    #$Private:reportObjHolding.AssetName = $($Private:reportObjHolding.AssetName -join ",")
+                                    if(!($Private:reportObjHolding.Finding_Details)){
+                                        $Private:reportObjHolding.Finding_Details = $Private:reportObj.Finding_Details
+                                    }
+                                }
+                            } # IF Obj
+                            else{
+                                $Private:entry = ($Private:entry = " " | select-object STIG_Title, AssetName, Vuln_Num, Severity, Group_Title, Rule_ID, Rule_Ver, Rule_Title, Vuln_Discuss, IA_Controls, Check_Content, Fix_Text, False_Positives, False_Negatives, Documentable, Mitigations, Potential_Impact, Third_Party_Tools, Mitigation_Control, Responsibility, Security_Override_Guidance, Check_Content_Ref, Class, STIGRef, TargetKey, Status, Finding_Details, Comments, Severity_Override, Severity_Justification, vuln_count)
+                                $Private:entry.STIG_Title = $($Private:reportObj.STIG_Title).trim()
+                                $Private:entry.AssetName = $($Private:reportObj.AssetName).trim()
+                                $Private:entry.Vuln_Num = $($Private:reportObj.Vuln_Num).trim()
+                                $Private:entry.Severity = $($Private:reportObj.Severity).trim()
+                                $Private:entry.Group_Title = $($Private:reportObj.Group_Title).trim()
+                                $Private:entry.Rule_ID = $($Private:reportObj.Rule_ID).trim()
+                                $Private:entry.Rule_Ver = $($Private:reportObj.Rule_Ver).trim()
+                                $Private:entry.Rule_Title = $($Private:reportObj.Rule_Title).trim()
+                                $Private:entry.Vuln_Discuss = $($Private:reportObj.Vuln_Discuss).trim()
+                                $Private:entry.IA_Controls = $($Private:reportObj.IA_Controls).trim()
+                                $Private:entry.Check_Content = $($Private:reportObj.Check_Content).trim()
+                                $Private:entry.Fix_Text = $($Private:reportObj.Fix_Text).trim()
+                                $Private:entry.False_Positives = $($Private:reportObj.False_Positives).trim()
+                                $Private:entry.False_Negatives = $($Private:reportObj.False_Negatives).trim()
+                                $Private:entry.Documentable = $($Private:reportObj.Documentable).trim()
+                                $Private:entry.Mitigations = $($Private:reportObj.Mitigations).trim()
+                                $Private:entry.Potential_Impact = $($Private:reportObj.Potential_Impact).trim()
+                                $Private:entry.Third_Party_Tools = $($Private:reportObj.Third_Party_Tools).trim()
+                                $Private:entry.Mitigation_Control = $($Private:reportObj.Mitigation_Control).trim()
+                                $Private:entry.Responsibility = $($Private:reportObj.Responsibility).trim()
+                                $Private:entry.Security_Override_Guidance = $($Private:reportObj.Security_Override_Guidance).trim()
+                                $Private:entry.Check_Content_Ref = $($Private:reportObj.Check_Content_Ref).trim()
+                                $Private:entry.Class = $($Private:reportObj.Class).trim()
+                                $Private:entry.STIGRef = $($Private:reportObj.STIGRef).trim()
+                                $Private:entry.TargetKey = $($Private:reportObj.TargetKey).trim()
+                                $Private:entry.Status = $($Private:reportObj.Status).trim()
+                                $Private:entry.Finding_Details = $($Private:reportObj.Finding_Details).trim()
+                                $Private:entry.Comments = $($Private:reportObj.Comments).trim()
+                                $Private:entry.Severity_Override = $($Private:reportObj.Severity_Override).trim()
+                                $Private:entry.Severity_Justification = $($Private:reportObj.Severity_Justification).trim()
+                                $Private:entry.vuln_count = 1
+                                $Private:results += $Private:entry
+                            }
+                        }  # For Loop
+                    }
+
+                    2 {
+                        foreach($Private:reportObj in $report){
+                            $Private:reportObjHolding = $Private:results | Where-Object{$_.Rule_ID -eq $Private:reportObj.Rule_ID}
+                            if($Private:reportObjHolding){
+                                if(!($Private:reportObjHolding.HOST_NAME.split(",") -contains $Private:reportObj.HOST_NAME)){
+                                    $Private:reportObjHolding.HOST_NAME += ","+$Private:reportObj.HOST_NAME
+                                    $Private:reportObjHolding.vuln_count ++
+                                    #$Private:reportObjHolding.AssetName = $($Private:reportObjHolding.AssetName -join ",")
+                                    if(!($Private:reportObjHolding.Finding_Details)){
+                                        $Private:reportObjHolding.Finding_Details = $Private:reportObj.Finding_Details
+                                    }
+                                }
+                            } # IF Obj
+                            else{
+                                $Private:entry = $Private:reportObj
+                                $Private:entry | add-member –membertype NoteProperty –name vuln_count –value 1
+                                $Private:results += $Private:entry
                             }
                         }
-                    } # IF Obj
-                    else{
-                        $Private:entry = ($Private:entry = " " | select-object STIG_Title, AssetName, Vuln_Num, Severity, Group_Title, Rule_ID, Rule_Ver, Rule_Title, Vuln_Discuss, IA_Controls, Check_Content, Fix_Text, False_Positives, False_Negatives, Documentable, Mitigations, Potential_Impact, Third_Party_Tools, Mitigation_Control, Responsibility, Security_Override_Guidance, Check_Content_Ref, Class, STIGRef, TargetKey, Status, Finding_Details, Comments, Severity_Override, Severity_Justification, vuln_count)
-                        $Private:entry.STIG_Title = $($Private:reportObj.STIG_Title).trim()
-                        $Private:entry.AssetName = $($Private:reportObj.AssetName).trim()
-                        $Private:entry.Vuln_Num = $($Private:reportObj.Vuln_Num).trim()
-                        $Private:entry.Severity = $($Private:reportObj.Severity).trim()
-                        $Private:entry.Group_Title = $($Private:reportObj.Group_Title).trim()
-                        $Private:entry.Rule_ID = $($Private:reportObj.Rule_ID).trim()
-                        $Private:entry.Rule_Ver = $($Private:reportObj.Rule_Ver).trim()
-                        $Private:entry.Rule_Title = $($Private:reportObj.Rule_Title).trim()
-                        $Private:entry.Vuln_Discuss = $($Private:reportObj.Vuln_Discuss).trim()
-                        $Private:entry.IA_Controls = $($Private:reportObj.IA_Controls).trim()
-                        $Private:entry.Check_Content = $($Private:reportObj.Check_Content).trim()
-                        $Private:entry.Fix_Text = $($Private:reportObj.Fix_Text).trim()
-                        $Private:entry.False_Positives = $($Private:reportObj.False_Positives).trim()
-                        $Private:entry.False_Negatives = $($Private:reportObj.False_Negatives).trim()
-                        $Private:entry.Documentable = $($Private:reportObj.Documentable).trim()
-                        $Private:entry.Mitigations = $($Private:reportObj.Mitigations).trim()
-                        $Private:entry.Potential_Impact = $($Private:reportObj.Potential_Impact).trim()
-                        $Private:entry.Third_Party_Tools = $($Private:reportObj.Third_Party_Tools).trim()
-                        $Private:entry.Mitigation_Control = $($Private:reportObj.Mitigation_Control).trim()
-                        $Private:entry.Responsibility = $($Private:reportObj.Responsibility).trim()
-                        $Private:entry.Security_Override_Guidance = $($Private:reportObj.Security_Override_Guidance).trim()
-                        $Private:entry.Check_Content_Ref = $($Private:reportObj.Check_Content_Ref).trim()
-                        $Private:entry.Class = $($Private:reportObj.Class).trim()
-                        $Private:entry.STIGRef = $($Private:reportObj.STIGRef).trim()
-                        $Private:entry.TargetKey = $($Private:reportObj.TargetKey).trim()
-                        $Private:entry.Status = $($Private:reportObj.Status).trim()
-                        $Private:entry.Finding_Details = $($Private:reportObj.Finding_Details).trim()
-                        $Private:entry.Comments = $($Private:reportObj.Comments).trim()
-                        $Private:entry.Severity_Override = $($Private:reportObj.Severity_Override).trim()
-                        $Private:entry.Severity_Justification = $($Private:reportObj.Severity_Justification).trim()
-                        $Private:entry.vuln_count = 1
-                        $Private:results += $Private:entry
                     }
-                }  # For Loop
+                }
                 return $Private:results
             }
             CATCH{

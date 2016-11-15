@@ -7,7 +7,7 @@
 $moduleName = "PSIASTAND"
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Global:testData = "$here\data"
-Import-Module "$here\..\$($moduleName)"
+Import-Module "$here\..\$($moduleName)" -Force
 Get-ChildItem "$here" -Filter "Pester*.csv" | Remove-Item
 
 if ($tests)

@@ -86,7 +86,7 @@ Export-CKL -Path C: -Out C:\Results -Version 1 -Recursive
                 "Rule_Ver"="STIG ID"
                 "Rule_Title"="Rule Title"
                 "Vuln_Discuss"="Discussion"
-                "IA_Controls"="IA Controls"
+                "IA_Controls"="IA Control"
                 "Check_Content"="Check Content"
                 "Fix_Text"="Fix Text"
                 "False_Positives"="False Positives"
@@ -109,6 +109,7 @@ Export-CKL -Path C: -Out C:\Results -Version 1 -Recursive
                 "COMMENTS"= "Comments"
                 "SEVERITY_OVERRIDE"= "Severity Override"
                 "SEVERITY_JUSTIFICATION"= "Severity Override Justification"
+                "stigid"="STIG"
             }
         }
     }
