@@ -38,11 +38,14 @@
                 $Private:results = @()
                 $cklversion = $($($report.StigViewer_Version) | Select-Object -Unique)
                 foreach($Private:reportObj in $report){
-                $Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values")
+                #$Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values") Previous to CVSS implementation
+                $Private:entry = ($Private:entry = " " | select-object Source, Name, ID, Weaknesses, Cat, "IA Control", Count, CVSS, "Assessed Risk Level")
+                $Private:entry.Source = "STIG"
                 switch($cklversion){
                     1{
                         if($Private:reportObj.Vuln_Num){
                             $Private:entry.name = "$($Private:reportObj.STIG_Title) - ID: $($Private:reportObj.Vuln_Num) - $($Private:reportObj.Rule_Title)"
+                            $Private:entry.ID = "$($Private:reportObj.STIG_Title) - ID:: $($Private:reportObj.Vuln_Num) - $($Private:reportObj.Rule_Title)"
                         }
                         else{
                             $Private:entry.name = "$($Private:reportObj.STIG_Title) - $($Private:reportObj.Rule_Title)"
@@ -91,7 +94,8 @@
         if ($nessus) {
             $Private:results = @()
             foreach($Private:reportObj in $report){
-                $Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values")
+                #$Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values") Previous to CVSS implementation
+                $Private:entry = ($Private:entry = " " | select-object Source, Name, ID, Weaknesses, Cat, "IA Control", Count, CVSS, "Assessed Risk Level")
                 $Private:entry.Name = "ACAS - Plugin ID: $($Private:reportObj.pluginID) - $($Private:reportObj.pluginName)"
                 $Private:entry.Weaknesses = "Description:" + "`r`n" + $($Private:reportObj.description) + "`r`n" + "Affected System:" + "`r`n" + $($Private:reportObj.AssetName -split "," -join "`r`n")
                 if($Private:reportObj.Severity){
@@ -124,7 +128,8 @@
         if ($diacap) {
             $Private:results = @()
             foreach($Private:reportObj in $report){
-                $Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values")
+                #$Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values") Previous to CVSS implementation
+                $Private:entry = ($Private:entry = " " | select-object Source, Name, ID, Weaknesses, Cat, "IA Control", Count, CVSS, "Assessed Risk Level")
                 $Private:entry.Name = "8500.2 - ID: $($Private:reportObj.AssessmentObjectiveID) - $($Private:reportObj.'Control Name')"
                 $Private:entry.Weaknesses = "Description:" + "`r`n" + $($Private:reportObj.'Assessment Objectives') + "`r`n" + "Affected System:" + "`r`n" + "Site"
                 if($Private:reportObj.'Impact Code' -eq 'low'){
