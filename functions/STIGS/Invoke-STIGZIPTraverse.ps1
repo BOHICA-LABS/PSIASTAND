@@ -90,4 +90,4 @@
   $results | Export-Csv -NoTypeInformation -Path $output
 }
 
-Invoke-STIGZIPTraverse -zips "C:\Users\josh\Google Drive\Code_Repo\PSIASTAND\Downloads\11142016-3140" -output "C:\Users\josh\Google Drive\Code_Repo\PSIASTAND\STIG_Report.csv" -Verbose
+#Invoke-STIGZIPTraverse -zips "C:\Users\josh\Google Drive\Code_Repo\PSIASTAND\Downloads\11142016-3140" -output "C:\Users\josh\Google Drive\Code_Repo\PSIASTAND\STIG_Report.csv" -Verbose
