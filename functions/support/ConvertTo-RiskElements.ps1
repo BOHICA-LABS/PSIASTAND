@@ -45,18 +45,21 @@
                     1{
                         if($Private:reportObj.Vuln_Num){
                             $Private:entry.name = "$($Private:reportObj.STIG_Title) - ID: $($Private:reportObj.Vuln_Num) - $($Private:reportObj.Rule_Title)"
-                            $Private:entry.ID = "$($Private:reportObj.STIG_Title) - ID:: $($Private:reportObj.Vuln_Num) - $($Private:reportObj.Rule_Title)"
+                            $Private:entry.ID = "$($Private:reportObj.Rule_ID) :: $($Private:reportObj.Vuln_Num)"
                         }
                         else{
                             $Private:entry.name = "$($Private:reportObj.STIG_Title) - $($Private:reportObj.Rule_Title)"
+                            $Private:entry.ID = "$($Private:reportObj.Rule_ID)"
                         }
                     }
                     2{
                         if($Private:reportObj.Vuln_Num){
                             $Private:entry.name = "$($Private:reportObj.STIGRef) - ID: $($Private:reportObj.Vuln_Num) - $($Private:reportObj.Rule_Title)"
+                            $Private:entry.ID = "$($Private:reportObj.Rule_ID) ID:: $($Private:reportObj.Vuln_Num)"
                         }
                         else{
                             $Private:entry.name = "$($Private:reportObj.STIGRef) - $($Private:reportObj.Rule_Title)"
+                            $Private:entry.ID = "$($Private:reportObj.Rule_ID)"
                         }
                     }
                 }
@@ -86,7 +89,6 @@
                 $Private:entry.'IA Control' = $Private:reportObj.IA_Controls
                 $Private:entry.Count = $Private:reportObj.vuln_count
                 $Private:entry.'Assessed Risk Level' = $null
-                $Private:entry.'Quantitative Values' = $null
                 $Private:results += $Private:entry
             }
             return $Private:results
@@ -97,7 +99,9 @@
                 #$Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values") Previous to CVSS implementation
                 $Private:entry = ($Private:entry = " " | select-object Source, Name, ID, Weaknesses, Cat, "IA Control", Count, CVSS, "Assessed Risk Level")
                 $Private:entry.Name = "ACAS - Plugin ID: $($Private:reportObj.pluginID) - $($Private:reportObj.pluginName)"
+                $Private:entry.ID = "$($Private:reportObj.pluginID)"
                 $Private:entry.Weaknesses = "Description:" + "`r`n" + $($Private:reportObj.description) + "`r`n" + "Affected System:" + "`r`n" + $($Private:reportObj.AssetName -split "," -join "`r`n")
+                $Private:entry.Source = "NESSUS"
                 if($Private:reportObj.Severity){
                     if($Private:reportObj.risk_factor -eq 'low'){
                         $Private:entry.Cat = "III"
@@ -121,7 +125,6 @@
                 $Private:entry.'IA Control' = $null
                 $Private:entry.Count = $Private:reportObj.vuln_count
                 $Private:entry.'Assessed Risk Level' = $null
-                $Private:entry.'Quantitative Values' = $null
                 $Private:results += $Private:entry
             }
         }
@@ -131,6 +134,8 @@
                 #$Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values") Previous to CVSS implementation
                 $Private:entry = ($Private:entry = " " | select-object Source, Name, ID, Weaknesses, Cat, "IA Control", Count, CVSS, "Assessed Risk Level")
                 $Private:entry.Name = "8500.2 - ID: $($Private:reportObj.AssessmentObjectiveID) - $($Private:reportObj.'Control Name')"
+                $Private:entry.ID = "$($Private:reportObj.AssessmentObjectiveID)"
+                $Private:entry.Source = "DIACAP"
                 $Private:entry.Weaknesses = "Description:" + "`r`n" + $($Private:reportObj.'Assessment Objectives') + "`r`n" + "Affected System:" + "`r`n" + "Site"
                 if($Private:reportObj.'Impact Code' -eq 'low'){
                     $Private:entry.Cat = "III"
@@ -147,7 +152,6 @@
                 $Private:entry.'IA Control' = $Private:reportObj.'Control Number'
                 $Private:entry.Count = 1
                 $Private:entry.'Assessed Risk Level' = $null
-                $Private:entry.'Quantitative Values' = $null
                 $Private:results += $Private:entry
             }
         }
