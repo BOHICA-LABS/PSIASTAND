@@ -141,7 +141,7 @@
                         }
                     } # IF
                     else{
-                        $Private:entry = ($Private:entry = " " | select-object AssetName, port, svc_name, protocol, severity, pluginID, pluginName, pluginFamily, description, fname, plugin_modification_date, plugin_name, plugin_publication_date, plugin_type, risk_factor, script_version, solution, synopsis, plugin_output, vuln_count)
+                        $Private:entry = ($Private:entry = " " | select-object AssetName, port, svc_name, protocol, severity, pluginID, pluginName, pluginFamily, description, fname, plugin_modification_date, plugin_name, plugin_publication_date, plugin_type, risk_factor, script_version, solution, synopsis, plugin_output, vuln_count, cvss_base_score, cvss_temporal_score, cvss_temporal_vector, cvss_vector, cvss3_base_score, cvss3_temporal_score, cvss3_temporal_vector, cvss3_vector)
                         $Private:entry.AssetName = $($Private:AssignedHostname).trim()
                         $Private:entry.Port = $($Private:reportObj.Port).trim()
                         $Private:entry.svc_name = $($Private:reportObj.svc_name).trim()
@@ -161,6 +161,14 @@
                         $Private:entry.solution = $($Private:reportObj.solution).trim()
                         $Private:entry.synopsis = $(if($Private:reportObj.synopsis){$($Private:reportObj.synopsis).trim()})
                         $Private:entry.plugin_output = $(if($Private:reportObj.plugin_output){$($Private:reportObj.plugin_output).trim()})
+                        $Private:entry.cvss_base_score = $Private:reportObj.cvss_base_score
+                        $Private:entry.cvss_temporal_score = $Private:reportObj.cvss_temporal_score
+                        $Private:entry.cvss_temporal_vector = $Private:reportObj.cvss_temporal_vector
+                        $Private:entry.cvss_vector = $Private:reportObj.cvss_vector
+                        $Private:entry.cvss3_base_score = $Private:reportObj.cvss3_base_score
+                        $Private:entry.cvss3_temporal_score = $Private:reportObj.cvss3_temporal_score
+                        $Private:entry.cvss3_temporal_vector = $Private:reportObj.cvss3_temporal_vector
+                        $Private:entry.cvss3_vector = $Private:reportObj.cvss3_vector
                         $private:entry.vuln_count = 1
                         $Private:results += $Private:entry
                     } # else
