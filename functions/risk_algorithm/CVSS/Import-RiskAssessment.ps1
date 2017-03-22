@@ -136,5 +136,5 @@
   }
 }
 
-Import-RiskAssessment -risk "C:\Users\josh\Google Drive\Code_Repo\PSIASTAND\tests\data\Mock_APP\APP_OWNER_Risk_CVSS1.xlsx" -map "C:\Users\josh\Google Drive\Code_Repo\PSIASTAND\tests\data\Risk_Mapping\Sample_Risk_Map_CVSS1.xlsx" -output "C:\Users\josh\Google Drive\Code_Repo\PSIASTAND\tests" -name "test"
+#Import-RiskAssessment -risk "C:\Users\josh\Google Drive\Code_Repo\PSIASTAND\tests\data\Mock_APP\APP_OWNER_Risk_CVSS1.xlsx" -map "C:\Users\josh\Google Drive\Code_Repo\PSIASTAND\tests\data\Risk_Mapping\Sample_Risk_Map_CVSS1.xlsx" -output "C:\Users\josh\Google Drive\Code_Repo\PSIASTAND\tests" -name "test"
 
