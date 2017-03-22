@@ -55,7 +55,7 @@
                     2{
                         if($Private:reportObj.Vuln_Num){
                             $Private:entry.name = "$($Private:reportObj.STIGRef) - ID: $($Private:reportObj.Vuln_Num) - $($Private:reportObj.Rule_Title)"
-                            $Private:entry.ID = "$($Private:reportObj.Rule_ID) :: $($Private:reportObj.Vuln_Num)"
+                            $Private:entry.ID = "$($Private:reportObj.Rule_ID) ID:: $($Private:reportObj.Vuln_Num)"
                         }
                         else{
                             $Private:entry.name = "$($Private:reportObj.STIGRef) - $($Private:reportObj.Rule_Title)"
@@ -64,7 +64,14 @@
                     }
                 }
                 if($Private:reportObj.Vuln_Discuss){
-                    $Private:entry.Weaknesses = "Description:" + "`r`n" + $($Private:reportObj.Vuln_Discuss) + "`r`n" + "Affected System:" + "`r`n" + $($Private:reportObj.AssetName -split "," -join "`r`n")
+                    switch($cklversion){
+                        1{
+                            $Private:entry.Weaknesses = "Description:" + "`r`n" + $($Private:reportObj.Vuln_Discuss) + "`r`n" + "Affected System:" + "`r`n" + $($Private:reportObj.AssetName -split "," -join "`r`n")
+                        }
+                        2{
+                            $Private:entry.Weaknesses = "Description:" + "`r`n" + $($Private:reportObj.Vuln_Discuss) + "`r`n" + "Affected System:" + "`r`n" + $($Private:reportObj.Host_Name -split "," -join "`r`n")
+                        }
+                    }
                 }
                 else{
                     Throw $ERRORCREATEPOAM = "No Vuln Description for $($Private:reportObj.Vuln_Num) STIG $($Private:reportObj.STIG_Title)"
@@ -125,6 +132,13 @@
                 $Private:entry.'IA Control' = $null
                 $Private:entry.Count = $Private:reportObj.vuln_count
                 $Private:entry.'Assessed Risk Level' = $null
+                If($Private:reportObj.cvss3_vector -ne $null){
+                    $Private:entry.CVSS = $Private:reportObj.cvss3_vector
+                    $CVSS = New-CVSS3
+                    $Private:entry.'Assessed Risk Level' = ($CVSS.calculateCVSSFromVector($Private:reportObj.cvss3_vector)).baseMetricScore
+                }else{
+                    $Private:entry.CVSS = $Private:reportObj.cvss_vector
+                }
                 $Private:results += $Private:entry
             }
         }
@@ -133,8 +147,8 @@
             foreach($Private:reportObj in $report){
                 #$Private:entry = ($Private:entry = " " | select-object Name, Weaknesses, Cat, "IA Control", Count, "Assessed Risk Level", "Quantitative Values") Previous to CVSS implementation
                 $Private:entry = ($Private:entry = " " | select-object Source, Name, ID, Weaknesses, Cat, "IA Control", Count, CVSS, "Assessed Risk Level")
-                $Private:entry.Name = "8500.2 - ID: $($Private:reportObj.AssessmentObjectiveID) - $($Private:reportObj.'Control Name')"
-                $Private:entry.ID = "$($Private:reportObj.AssessmentObjectiveID)"
+                $Private:entry.Name = "8500.2 - ID: $($Private:reportObj.'Assessment Objective ID') - $($Private:reportObj.'Control Name')"
+                $Private:entry.ID = "$($Private:reportObj.'Assessment Objective ID')"
                 $Private:entry.Source = "DIACAP"
                 $Private:entry.Weaknesses = "Description:" + "`r`n" + $($Private:reportObj.'Assessment Objectives') + "`r`n" + "Affected System:" + "`r`n" + "Site"
                 if($Private:reportObj.'Impact Code' -eq 'low'){
