@@ -20,6 +20,11 @@
           This was due to the missplaced toString() converting int to strings.
           This caused the comparasion to fail.
         -Corrected issue with $badMetrics piping add count to console
+      1.1.1 (03/13/2017) JBR
+        -Corrected a rounding issue in the environmental scoring that was
+          causing environmental scores to sometime be lower by a tenth.  This
+          was due to a misplaced parenthesis. 
+
   #>
 
   # Constants used in the formula
@@ -332,7 +337,7 @@
 
     if ($MS -eq "U" -or ($MS -eq "X" -and $S -eq "U")) {
       $envModifiedImpactSubScore = $metricWeightMS * $envImpactSubScoreMultiplier
-      $envScore = $this.roundUp1($this.roundUp1([math]::Min(($envModifiedImpactSubScore + $envModifiedExploitabalitySubScore), 10) * $metricWeightE * $metricWeightRL * $metricWeightRC))
+      $envScore = $this.roundUp1($this.roundUp1([math]::Min(($envModifiedImpactSubScore + $envModifiedExploitabalitySubScore), 10)) * $metricWeightE * $metricWeightRL * $metricWeightRC)
     } else {
       $envModifiedImpactSubScore = $metricWeightMS * ($envImpactSubScoreMultiplier - 0.029) - 3.25 * [math]::Pow($envImpactSubScoreMultiplier - 0.02, 15)
       $envScore = $this.roundUp1($this.roundUp1([math]::Min($this.scopeCoefficient * ($envModifiedImpactSubScore + $envModifiedExploitabalitySubScore), 10)) * $metricWeightE * $metricWeightRL * $metricWeightRC)

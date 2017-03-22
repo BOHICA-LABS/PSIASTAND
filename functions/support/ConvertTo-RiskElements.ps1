@@ -55,7 +55,7 @@
                     2{
                         if($Private:reportObj.Vuln_Num){
                             $Private:entry.name = "$($Private:reportObj.STIGRef) - ID: $($Private:reportObj.Vuln_Num) - $($Private:reportObj.Rule_Title)"
-                            $Private:entry.ID = "$($Private:reportObj.Rule_ID) ID:: $($Private:reportObj.Vuln_Num)"
+                            $Private:entry.ID = "$($Private:reportObj.Rule_ID) :: $($Private:reportObj.Vuln_Num)"
                         }
                         else{
                             $Private:entry.name = "$($Private:reportObj.STIGRef) - $($Private:reportObj.Rule_Title)"
