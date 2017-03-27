@@ -31,7 +31,7 @@ Describe -tag 'ConvertTo-RiskElements' "ConvertTo-RiskElements PS: $PSVersion" {
             $compressedCKL = Compress-Report -Report $filteredCKL -CKL
             $risk = ConvertTo-RiskElements -report $compressedCKL -ckl
             $properties = $($risk | Get-Member -MemberType NoteProperty).Name
-            $($properties -contains "Name" -and $properties -contains "Weaknesses" -and $properties -contains "Cat" -and $properties -contains "IA Control" -and $properties -contains "Count" -and $properties -contains "Assessed Risk Level" -and $properties -contains "Quantitative Values") | Should Be $true
+            $($properties -contains "Name" -and $properties -contains "Weaknesses" -and $properties -contains "Cat" -and $properties -contains "IA Control" -and $properties -contains "Count" -and $properties -contains "Assessed Risk Level") | Should Be $true
         }
 
         It "Should Convert to Risk Elements (Nessus) (Requires Import-XLSX, Import-XML, Import-Nessus, Compress-Report)" {
@@ -42,7 +42,7 @@ Describe -tag 'ConvertTo-RiskElements' "ConvertTo-RiskElements PS: $PSVersion" {
             $compressnessus = compress-report -report $filterednessus -nessus
             $risk = ConvertTo-RiskElements -report $compressnessus -nessus
             $properties = $($risk | Get-Member -MemberType NoteProperty).Name
-            $($properties -contains "Name" -and $properties -contains "Weaknesses" -and $properties -contains "Cat" -and $properties -contains "IA Control" -and $properties -contains "Count" -and $properties -contains "Assessed Risk Level" -and $properties -contains "Quantitative Values") | Should Be $true
+            $($properties -contains "Name" -and $properties -contains "Weaknesses" -and $properties -contains "Cat" -and $properties -contains "IA Control" -and $properties -contains "Count" -and $properties -contains "Assessed Risk Level") | Should Be $true
         }
 
         It "Should Convert to Risk Elements (Controls) (Requires Import-XLSX, Import-DIACAP, Import-XML, Import-CKL, Compress-Report)" {
@@ -51,7 +51,7 @@ Describe -tag 'ConvertTo-RiskElements' "ConvertTo-RiskElements PS: $PSVersion" {
             $final = $controls | Where-Object {$_."Assessment Status" -match "Fail"}
             $risk = ConvertTo-RiskElements -report $final -diacap
             $properties = $($risk | Get-Member -MemberType NoteProperty).Name
-            $($properties -contains "Name" -and $properties -contains "Weaknesses" -and $properties -contains "Cat" -and $properties -contains "IA Control" -and $properties -contains "Count" -and $properties -contains "Assessed Risk Level" -and $properties -contains "Quantitative Values") | Should Be $true
+            $($properties -contains "Name" -and $properties -contains "Weaknesses" -and $properties -contains "Cat" -and $properties -contains "IA Control" -and $properties -contains "Count" -and $properties -contains "Assessed Risk Level") | Should Be $true
         }
     }
 }
