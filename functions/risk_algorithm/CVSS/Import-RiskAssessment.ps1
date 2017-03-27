@@ -4,17 +4,15 @@
       .SYNOPSIS
       Launches the CLI for assigning CVSS Scores
 
-      .PARAMETER 
-
-      .PARAMETER 
+      .PARAMETER
 
       .PARAMETER
 
-      .PARAMETER 
+      .PARAMETER
 
+      .PARAMETER
 
       .EXAMPLE
-
 
       .LINK
 
@@ -23,45 +21,45 @@
         -Intial Release
 
   #>
-  
+
   [CmdletBinding()]
   param
   (
     [String]
     $risk = $(Throw "No RISK Path provided"),
-  
+
     [String]
     $map = $(Throw "No MAP provided"),
-    
+
     [String]
     $output = $(Throw "No Output folder provided"),
-    
+
     [String]
     $name = $(Throw "No Name provided"),
-    
+
     [switch]
     $answer
   )
-  
+
   # Global Regex Objects
   $colonfind = New-Object System.Text.RegularExpressions.Regex '^.*(:{2}).*$', 'ignorecase'
   $ruleandVuln = New-Object System.Text.RegularExpressions.Regex '^\s{0,}(\S{0,})\s{0,}::\s{0,}(\S{0,})\s{0,}$', 'ignorecase'
-  
+
   # Test to see if the path to the risk report exists
-  if(!(Test-Path -Path $risk)){Throw "Risk path does not exist"} 
-  
+  if(!(Test-Path -Path $risk)){Throw "Risk path does not exist"}
+
   # Test to see if the path to the map report exists
   if(!(Test-Path -Path $map)){Throw "Map path does not exist"}
 
   # Import Risk Elements
   $riskelements = Import-XLSX -Path $risk
-  
+
   # Import mapper
   $riskmap = Import-XLSX -Path $map
-  
+
   # Select the ID from the Risk Map
   $riskmapIDlist = $(($riskmap | Select-Object ID).ID)
-  
+
   # Loop Through Each risk Element
   $nomap = @()
   foreach ($element in $riskelements)
@@ -71,7 +69,7 @@
     {
       # Extract Both sides of the colon
       $extracted = $ruleandVuln.Matches($element.id)
-      
+
       # Test different variations for a match in the mapper
       if($riskmapIDlist -match "^\s{0,}($($extracted.groups[1].Value))\s{0,}::\s{0,}($($extracted.groups[2].Value))\s{0,}$")
       {
@@ -98,8 +96,8 @@
         $badmap.Cat = $element.Cat
         $badmap.IAControl = $element."IA Control"
         $nomap += $badmap
-      } 
-      
+      }
+
     }
     elseif($riskmapIDlist -match $element.id)
     {
@@ -119,12 +117,12 @@
         $badmap.IAControl = $element."IA Control"
         $nomap += $badmap
     }
-    
+
     # Check to see if it returned more then one match
     if($mapping.Count -gt 1){$mapping = $mapping[0]}
     $element.CVSS = $mapping.CVSS
   }
-  
+
   if($nomap)
   {
     Export-XLSX -Path "$($output)\$($name)_Risk_ERROR.xlsx" -InputObject $nomap

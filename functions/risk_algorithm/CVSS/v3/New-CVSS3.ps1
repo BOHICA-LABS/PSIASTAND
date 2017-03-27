@@ -23,8 +23,7 @@
       1.1.1 (03/13/2017) JBR
         -Corrected a rounding issue in the environmental scoring that was
           causing environmental scores to sometime be lower by a tenth.  This
-          was due to a misplaced parenthesis. 
-
+          was due to a misplaced parenthesis.
   #>
 
   # Constants used in the formula

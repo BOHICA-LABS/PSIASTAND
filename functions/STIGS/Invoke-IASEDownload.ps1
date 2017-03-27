@@ -4,13 +4,13 @@
       .SYNOPSIS
       This Script downloads *.zip from IASE website
 
-      .PARAMETER 
-
-      .PARAMETER 
+      .PARAMETER
 
       .PARAMETER
 
-      .PARAMETER 
+      .PARAMETER
+
+      .PARAMETER
 
 
       .EXAMPLE
@@ -35,7 +35,7 @@
     [int]$thread = 5, # number of threads to use
     [switch]$archive
   )
-  
+
   New-Item -ItemType Directory -Force -Path $downloadDir | Out-Null
   if($archive)
   {
@@ -47,34 +47,34 @@
   {
     Remove-Item "$($downloadDir)\*.zip"
   }
-  
+
   # Download Script Block. We create it here for ease of updating code
   $downloadScriptBlock = {
     Param(
       [string]$downloadURL,
       [string]$downloaddir
     )
-    
+
     # Create a webclient
     $wc = New-Object System.Net.WebClient
     $wc.DownloadFile($downloadURL, $downloaddir)
   }
-  
+
   # Create Runspace Pool
   $runSpacePool = [RunspaceFactory]::CreateRunspacePool(1, $thread)
   $runSpacePool.Open()
   $jobs = @()
-  
+
   # Initialize Count
   $count =
   # Make the initial webrequest to find zips to download
   foreach ($address in $linksAddress)
   {
     $request = Invoke-WebRequest -Uri $address # Request the page
-    
+
     # Filter links by REGEX so that we only get the full versions of STIGS/SRG
     $foundZIP = $request.Links | Where-Object{$_.href -match '(?i)^.*\.zip$' -and $_.href -notmatch '(?i)^.*IAVM.*$' -and $_.href -notmatch '(?i)^.*Benchmark.*$' -and $_.href -notmatch '(?i)^.*SCAP.*$' -and $_.href -notmatch '(?i)^.*SCC.*$' -and $_.href -notmatch '(?i)^.*Overview.*$' -and $_.href -notmatch '(?i)^.*Library.*$' -and $_.href -notmatch '(?i)^.*Quick_Start.*$' -and $_.href -notmatch '(?i)^.*Guide-Tool.*$' -and $_.href -notmatch '(?i)^.*fouo.*$'}
-    
+
     # Download Each Zip found (Or attempt current failures are probably due to PKI)
     foreach($zip in $foundZIP)
     {
@@ -93,13 +93,13 @@
       }
     }
   }
-  
+
   # Wait for Jobs
   While($jobs.Result.IsCompleted -contains $false)
   {
     Start-Sleep -Seconds 1
   }
-  
+
   # Need to Add Error Handling
   #$results = @()
   #foreach($Job in $jobs)

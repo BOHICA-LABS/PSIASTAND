@@ -4,13 +4,13 @@
       .SYNOPSIS
       Launches the CLI for assigning CVSS Scores
 
-      .PARAMETER 
-
-      .PARAMETER 
+      .PARAMETER
 
       .PARAMETER
 
-      .PARAMETER 
+      .PARAMETER
+
+      .PARAMETER
 
 
       .EXAMPLE
@@ -30,5 +30,5 @@
     [string]$mapper,
     [string]$risks
   )
-  
+
 }
