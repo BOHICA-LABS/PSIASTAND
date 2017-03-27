@@ -33,7 +33,7 @@ Describe -tag 'Import-DIACAP' "Import-DIACAP PS: $PSVersion" {
             $xlsx = Import-XLSX -Path "$($TestDrive)\Sample_DODI_8500_2_Controls.xlsx"
             $controls = Import-DIACAP -doc $xlsx
             $properties = $($controls | Get-Member -MemberType NoteProperty).Name
-            ($properties -contains "Allocated Assessment ID" -and $properties -contains "Allocated Control ID" -and $properties -contains "Assessed By" -and $properties -contains "Assessment Date" -and $properties -contains "Assessment Objectives" -and $properties -contains "Assessment Status" -and $properties -contains "AssessmentObjectiveID" -and $properties -contains "Authorization Package" -and $properties -contains "Comments" -and $properties -contains "Control Implementation Status" -and $properties -contains "Control Name" -and $properties -contains "Control Number" -and $properties -contains "Impact Code" -and $properties -contains "Implementation Details" -and $properties -contains "Methods Used") | Should Be $true
+            ($properties -contains "Allocated Assessment ID" -and $properties -contains "Allocated Control ID" -and $properties -contains "Assessed By" -and $properties -contains "Assessment Date" -and $properties -contains "Assessment Objectives" -and $properties -contains "Assessment Status" -and $properties -contains "Assessment Objective ID" -and $properties -contains "Authorization Package" -and $properties -contains "Comments" -and $properties -contains "Control Implementation Status" -and $properties -contains "Control Name" -and $properties -contains "Control Number" -and $properties -contains "Impact Code" -and $properties -contains "Implementation Details" -and $properties -contains "Methods Used") | Should Be $true
         }
 
     }
