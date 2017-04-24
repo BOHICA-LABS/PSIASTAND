@@ -109,3 +109,7 @@ $("$($here)\functions" |
  Get-ChildItem -Recurse -Filter "*.ps1").fullName | 
  Where-Object { -not ($_.ToLower().Contains(".tests.")) } | 
  ForEach-Object {. $_ }
+ ("$($here)\modules" |
+ Get-ChildItem -Recurse -Filter "*.ps1").fullName | 
+ Where-Object { -not ($_.ToLower().Contains(".tests.")) } | 
+ ForEach-Object {. $_ }
