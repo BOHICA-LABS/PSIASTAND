@@ -45,7 +45,7 @@
 
         $this.Data = @{
             Success = $true
-            Data = $trackerFile
+            TrackerData = $trackerFile
         }
 
         #clears the error hashtable on success
